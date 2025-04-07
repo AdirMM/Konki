@@ -1,0 +1,56 @@
+html, body {
+  font-family: "Sour Gummy";
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  background-image: url('./assets/notebook.avif');
+  background-repeat: repeat-y;
+  background-size: cover;
+  background-position: center;
+  overflow-x: hidden;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Asegura que el contenedor principal ocupe toda la pantalla */
+}
+
+main {
+  flex-grow: 1; /* Permite que el main crezca y empuje el footer */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.bg-image {
+  background-image: url('./assets/notebook.avif');
+  background-repeat: repeat-y;
+  background-size: cover;
+  background-position: center;  
+}
+
+.grid-container {
+  display: grid;
+  grid-template-areas: 
+    "toggle addTask category";
+  grid-template-columns: 2fr;
+  gap: 1rem;
+  justify-items: center;
+
+  @media (max-width: 768px) {
+    grid-template-areas: 
+    "toggle category"
+    "addTask addTask";
+    grid-template-columns: 1fr 1fr;  
+  }
+}
+
+.category { grid-area: category; }
+.addTask { grid-area: addTask; }
+.toggle { grid-area: toggle; }
+
