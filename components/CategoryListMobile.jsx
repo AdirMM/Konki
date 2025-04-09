@@ -2,7 +2,7 @@ import { useCategoryContext } from '../context/CategoryContext'
 import { iconMap } from '../utils/icons'
 
 export function CategoryListMobile({ showCategories, setShowCategories }) {
-  const { setCategory, categories } = useCategoryContext()
+  const { category, setCategory, categories } = useCategoryContext()
 
   return (
     <>
@@ -18,10 +18,17 @@ export function CategoryListMobile({ showCategories, setShowCategories }) {
           <ul className="flex flex-row max-w-xs px-2 overflow-x-auto md:max-w-md lg:max-w-lg gap-x-2 scrollbar-thin scrollbar-thumb-gray-300">
             {categories.map((cat) => {
               const IconComponent = iconMap[cat.icon]
+              const isSelected = category.name === cat.name
               return (
                 <li
                   key={cat.name}
-                  className="px-3 py-2 bg-gray-100 border rounded-lg cursor-pointer min-w-fit hover:opacity-50 whitespace-nowrap"
+                  className={`px-3 py-2 border rounded-lg cursor-pointer min-w-fit hover:opacity-50 whitespace-nowrap
+                    ${
+                      isSelected
+                        ? 'bg-blue-500 text-white border-blue-500'
+                        : 'bg-gray-50'
+                    }
+                    `}
                   onClick={() => {
                     setCategory(cat)
                   }}
@@ -36,9 +43,6 @@ export function CategoryListMobile({ showCategories, setShowCategories }) {
           </ul>
         </div>
       </div>
-      <p className="mt-5 text-sm">
-        Nota: Desliza para ver el resto de categorias
-      </p>
     </>
   )
 }

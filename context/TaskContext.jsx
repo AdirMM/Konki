@@ -9,6 +9,8 @@ export function TaskProvider({ children }) {
   const [selectedTask, setSelectedTask] = useState({})
   const { category } = useCategoryContext()
 
+  const hasCompletedTasks = tasks.some((task) => task.completed)
+
   const addTask = () => {
     if (taskInput.trim() !== '') {
       setTasks([
@@ -80,6 +82,7 @@ export function TaskProvider({ children }) {
         tasks,
         setTasks,
         deleteCompletedTask,
+        hasCompletedTasks,
       }}
     >
       {children}

@@ -1,5 +1,5 @@
 import { Menu } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useUIContext } from '../context/UIContext'
 
 export function ActionMenu() {
@@ -8,8 +8,22 @@ export function ActionMenu() {
 
   const handleActions = () => setActionMenu((prev) => !prev)
 
+  const menuRef = useRef()
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setActionMenu(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [actionMenu, setActionMenu])
+
   return (
-    <div>
+    <div ref={menuRef}>
       <Menu
         className={`
     absolute size-9 transition-all duration-500 cursor-pointer 
@@ -33,13 +47,16 @@ export function ActionMenu() {
         `}
       >
         <button
-          className="px-4 py-3 border-2 rounded-lg shadow-lg cursor-pointer md:py-2 hover:opacity-55 shadow-black backdrop-blur-xs"
-          onClick={() => toggleModal('categories')}
+          className="px-4 py-3 border-2 border-black rounded-lg shadow-lg cursor-pointer md:py-2 hover:opacity-55 shadow-black"
+          onClick={() => {
+            toggleModal('categories')
+            setActionMenu((prev) => !prev)
+          }}
         >
           Categorias
         </button>
         <button
-          className="px-2 py-3 text-red-600 border-2 border-black rounded-lg shadow-lg cursor-pointer md:py-1 hover:opacity-55 backdrop-blur-xs shadow-black "
+          className="px-2 py-3 text-red-600 bg-white border-2 border-black rounded-lg shadow-lg cursor-pointer md:py-1 hover:opacity-55 shadow-black"
           onClick={() => {
             toggleModal('message')
             setActionMenu((prev) => !prev)

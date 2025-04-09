@@ -4,7 +4,7 @@ import { Modal } from './Modal'
 
 export function MessageModal() {
   const { modals, toggleModal } = useUIContext()
-  const { deleteCompletedTask } = useTaskContext()
+  const { hasCompletedTasks, deleteCompletedTask } = useTaskContext()
 
   return (
     <Modal
@@ -13,20 +13,26 @@ export function MessageModal() {
       title="Mensaje..."
     >
       <p className="mb-5 text-lg">
-        Estas seguro de eliminar todas las tareas completadas?
+        {hasCompletedTasks
+          ? 'Estas seguro de eliminar todas las tareas completadas?'
+          : 'No existen tareas completadas'}
       </p>
       <div className="flex justify-center gap-x-5">
+        {hasCompletedTasks && (
+          <>
+            <button
+              className="px-2 py-2 text-white bg-red-600 rounded-lg cursor-pointer"
+              onClick={() => {
+                deleteCompletedTask()
+                toggleModal('message')
+              }}
+            >
+              Estoy seguro
+            </button>
+          </>
+        )}
         <button
-          className="p-2 text-white bg-red-600 rounded-lg cursor-pointer"
-          onClick={() => {
-            deleteCompletedTask()
-            toggleModal('message')
-          }}
-        >
-          Estoy seguro
-        </button>
-        <button
-          className="px-2 border-2 rounded-lg cursor-pointer"
+          className="px-2 py-2 border-2 rounded-lg cursor-pointer"
           onClick={() => toggleModal('message')}
         >
           Volver

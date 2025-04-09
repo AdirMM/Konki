@@ -30,20 +30,20 @@ export function DrawingsBg() {
         />
       )}
 
-      {firstTask ? (
+      {firstTask && (
         <>
           <img
-            className="md:hidden absolute w-[9rem] top-80 left-5"
+            className="md:hidden absolute w-[9rem] bottom-60 left-5"
             src={consejo1}
             alt=""
           />
           <img
-            className="md:hidden absolute w-[10.5rem] top-80 right-0"
+            className="md:hidden absolute w-[10.5rem] bottom-62 right-0"
             src={consejo2}
             alt=""
           />
         </>
-      ) : null}
+      )}
 
       <img
         className="hidden md:block absolute w-[5rem] left-35 scale-x-200 -bottom-60"

@@ -56,6 +56,12 @@ export function CategoryModal() {
     toggleModal()
   }
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleCategory()
+    }
+  }
+
   const colors = ['#3b82f6', '#22c55e', '#ef4444']
 
   return (
@@ -71,7 +77,11 @@ export function CategoryModal() {
           className="w-64 px-2 py-1 text-center border-2 rounded-lg"
           placeholder="Ej. Compras, Familia..."
           value={newCategory}
-          onChange={(e) => setNewCategory(e.target.value)}
+          maxLength={10}
+          onChange={(e) => {
+            setNewCategory(e.target.value)
+          }}
+          onKeyDown={handleKeyDown}
         />
 
         <p className="text-xl">Elige un color</p>

@@ -19,7 +19,7 @@ export function Modal({ modalName, isOpen, onClose, title, children }) {
           ...prev,
           [modalName]: { ...prev[modalName], isAnimating: true },
         }))
-      }, 10) // Delay corto para que el DOM monte antes de animar
+      }, 50) // Delay corto para que el DOM monte antes de animar
     } else {
       // Quita la animación primero
       setModals((prev) => ({
@@ -55,7 +55,7 @@ export function Modal({ modalName, isOpen, onClose, title, children }) {
         </button>
 
         {/* Título */}
-        {title && <h2 className="mb-4 text-4xl font-semibold">{title}</h2>}
+        {title && <h2 className="mb-2 text-4xl font-semibold">{title}</h2>}
 
         {/* Contenido dinámico */}
         <div>{children}</div>

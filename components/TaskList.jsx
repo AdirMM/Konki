@@ -32,7 +32,7 @@ ${
             >
               <div className="flex items-center gap-x-4">
                 <span
-                  className={`flex justify-center select-none text-center items-center gap-x-4 cursor-pointer border-b-2 px-2 shadow-lg md:px-5 rounded-lg md:hover:px-7 transition-all duration-500 text-lg ${
+                  className={`flex justify-center select-none text-center items-center gap-x-4 cursor-pointer border-b-2 px-2 shadow-lg md:px-5 leading-5 rounded-lg md:hover:px-7 transition-all duration-500 text-lg ${
                     task.completed
                       ? 'line-through text-zinc-500 shadow-none'
                       : 'pb-1'

@@ -41,9 +41,9 @@ export function CategoriesModal() {
         Nota: Si quieres editar una categoria da click sobre ella ;)
       </p>
       <ul
-        className={`w-54 md:w-64 mx-auto grid mt-5 gap-y-5 md:gap-y-2 gap-x-5 
-          ${categories.length < 7 ? ' grid-cols-1' : 'grid-cols-2'}
-            `}
+        className={`w-60 md:w-64 max-h-64 mx-auto grid mt-5 gap-y-5 md:gap-y-2 gap-x-5 overflow-y-auto
+    ${categories.length < 7 ? ' grid-cols-1' : 'grid-cols-2'}
+  `}
       >
         {categories.length > 0 ? (
           categories.map((cat, index) => {
@@ -52,8 +52,8 @@ export function CategoriesModal() {
             return (
               <li key={index}>
                 <span
-                  className="flex flex-row items-center justify-center py-2 rounded-lg cursor-pointer  text-zinc-200 gap-x-2"
-                  style={{ backgroundColor: cat.color }}
+                  className="flex flex-row items-center justify-center py-2 leading-5 text-black border-b-2 rounded-lg cursor-pointer gap-x-2"
+                  style={{ borderColor: cat.color }}
                   onClick={() => handleEditCategory(cat)}
                 >
                   {cat.name}

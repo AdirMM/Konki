@@ -59,15 +59,15 @@ export function AddTaskMobileModal() {
           <p className="font-semibold ">
             Elige la categoria o agrega una nueva
           </p>
-          <div className="flex flex-col w-1/2 gap-5 py-2 mx-auto">
-            <button className="flex items-center justify-center py-2 border-2 rounded-lg shadow-lg cursor-pointer gap-x-1 md:py-2 backdrop-blur-lg">
+          <div className="flex items-center justify-center w-full py-2 gap-x-6">
+            <button className="flex items-center justify-center px-2 py-2 border-2 rounded-lg shadow-lg cursor-pointer max-w-32 gap-x-1 md:py-2 backdrop-blur-lg">
               {category.name}
               {IconComponent && <IconComponent size={18} />}
             </button>
 
             {/* Botón de agregar categoría */}
             <button
-              className="px-2 py-2 mx-auto text-black border-2 border-dotted rounded-lg cursor-pointer hover:opacity-50"
+              className="px-2 py-2 text-black border-2 border-dotted rounded-lg cursor-pointer hover:opacity-50"
               onClick={() => {
                 toggleModal('addTaskMobile') // Cierra el modal actual
 

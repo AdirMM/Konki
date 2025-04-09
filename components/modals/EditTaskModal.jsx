@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 
 import { iconMap } from '../../utils/icons'
-
+import { Plus } from 'lucide-react'
+import { CategoryListMobile } from '../CategoryListMobile'
 import { Modal } from './Modal'
 import { useUIContext } from '../../context/UIContext'
 import { useTaskContext } from '../../context/TaskContext'
@@ -10,11 +11,14 @@ import { useCategoryContext } from '../../context/CategoryContext'
 export function EditTaskModal() {
   const { selectedTask, editTask, removeTask } = useTaskContext()
   const { modals, toggleModal } = useUIContext()
-  const { categories } = useCategoryContext()
+  const { categories, category } = useCategoryContext()
+  const [showCategories, setShowCategories] = useState(true)
 
   const [isEditing, setIsEditing] = useState(false)
   const [editedTask, setEditedTask] = useState('')
   const [selectedCategory, setSelectedCategory] = useState(null)
+
+  const IconComponent = iconMap[category.icon]
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -56,15 +60,18 @@ export function EditTaskModal() {
     <Modal
       isOpen={modals?.editTask?.isOpen || false}
       onClose={handleCloseModal}
-      title="Tu Tarea"
+      title={!isEditing ? 'Tu tarea' : 'Editar tarea'}
     >
       {/* Contador de caracteres */}
-      <div className="flex justify-end text-sm text-gray-500">
-        <span>
-          {editedTask.length}/{maxLength} caracteres
-        </span>
-      </div>
+      {isEditing && (
+        <div className="flex justify-end text-sm text-gray-500">
+          <span>
+            {editedTask.length}/{maxLength} caracteres
+          </span>
+        </div>
+      )}
 
+      {/* Input para actualizar tarea */}
       <div className="flex flex-col pb-5 gap-y-2">
         <textarea
           name=""
@@ -78,10 +85,9 @@ export function EditTaskModal() {
       </div>
 
       <div>
-        {/* El consejo siempre se muestra */}
+        {/* El consejo se muestra si no se esta editando la tarea*/}
         {!isEditing && <p>Consejo: Intenta escribir en el recuadro ;)</p>}
-
-        {/* Contenido que se muestra solo cuando isEditing es true */}
+        {/* Categoría */}
         <div
           className={`transition-all duration-300 ${
             isEditing
@@ -89,46 +95,45 @@ export function EditTaskModal() {
               : 'opacity-0 pointer-events-none absolute left-0 top-0 h-0 w-0 overflow-hidden'
           }`}
         >
-          <p className="pb-4 text-xl">Selecciona una categoria</p>
+          <p className="font-semibold ">Categoria actual</p>
+          <div className="flex w-1/2 gap-5 py-2 mx-auto">
+            <span className="flex items-center justify-center px-4 py-1 mx-auto border-2 rounded-lg shadow-lg cursor-pointer gap-x-1 md:py-2 backdrop-blur-lg ">
+              {category.name}
+              {IconComponent && <IconComponent size={18} />}
+            </span>
 
-          <ul
-            className={`md:w-32 mx-auto flex flex-wrap items-center justify-center gap-3 md:gap-3
-      ${categories.length < 7 ? 'grid-cols-1' : 'grid-cols-2'}`}
-          >
-            {categories.length > 0 ? (
-              categories.map((cat, index) => {
-                const IconComponent = iconMap[cat.icon]
+            {/* Botón de agregar categoría */}
+            <button
+              className="px-2 py-2 mx-auto text-black border-2 border-dotted rounded-lg cursor-pointer hover:opacity-50"
+              onClick={() => {
+                toggleModal('addTaskMobile') // Cierra el modal actual
 
-                return (
-                  <li key={index}>
-                    <span
-                      className="flex flex-row items-center justify-center px-3 py-2 rounded-lg cursor-pointer md:py-1 md:px-2 text-zinc-200 gap-x-2"
-                      style={{ backgroundColor: cat.color }}
-                      onClick={() => setSelectedCategory(cat)}
-                    >
-                      {cat.name}
-                      {IconComponent && <IconComponent size={18} />}
-                    </span>
-                  </li>
-                )
-              })
-            ) : (
-              <p>No hay categorias disponibles</p>
-            )}
-          </ul>
+                setTimeout(() => {
+                  toggleModal('category') // Abre el nuevo modal
+                }, 300)
+              }}
+            >
+              <Plus />
+            </button>
+          </div>
+
+          <CategoryListMobile
+            showCategories={showCategories}
+            setShowCategories={setShowCategories}
+          />
         </div>
       </div>
 
       {isEditing && (
-        <div className="flex gap-2">
+        <div className="flex items-center justify-center gap-2 mt-3">
           <button
-            className="px-4 py-2 mt-10 text-white bg-blue-500 border-2 rounded-lg cursor-pointer"
+            className="px-2 py-2 text-white bg-blue-500 border-2 rounded-lg cursor-pointer"
             onClick={handleSaveTask}
           >
             Guardar tarea
           </button>
           <button
-            className="px-2 py-3 mt-10 text-white bg-red-500 border-2 rounded-lg cursor-pointer md:py-2 md:px-4"
+            className="px-2 py-2 text-white bg-red-500 border-2 rounded-lg cursor-pointer md:py-2 md:px-4"
             onClick={handleRemoveTask}
           >
             Eliminar Tarea
