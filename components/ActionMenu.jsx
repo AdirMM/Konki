@@ -26,19 +26,18 @@ export function ActionMenu() {
     <div ref={menuRef}>
       <Menu
         className={`
-    absolute size-9 transition-all duration-500 cursor-pointer 
-    top-5 md:fixed md:top-11 
-    left-1/2 -translate-x-1/2 
-    md:left-auto md:translate-x-0 md:right-22 
-    z-20 hover:opacity-55 
-    ${actionMenu ? 'rotate-90' : 'rotate-0'}
-  `}
+          absolute size-9 transition-all duration-500 cursor-pointer 
+          top-5 md:fixed md:top-11 left-5
+          md:left-auto md:translate-x-0 md:right-22
+          z-20 hover:opacity-55 
+          ${actionMenu ? 'rotate-90' : 'rotate-0'}
+          `}
         onClick={handleActions}
       />
 
       <div
-        className={`relative leading-4.5 flex md:flex-col gap-y-5 p-2 gap-x-4 md:w-32 md:fixed top-5 mx-auto md:top-13 md:right-10 transition-all duration-300 z-20 
-
+        className={`relative leading-4.5 flex md:flex-col gap-y-5 p-2 gap-x-4 md:w-32 md:fixed top-5 mx-auto md:top-13 md:right-10 transition-all duration-300 z-20 backdrop-blur-xs
+          
         ${
           actionMenu
             ? 'translate-y-10 opacity-100'
@@ -47,7 +46,7 @@ export function ActionMenu() {
         `}
       >
         <button
-          className="px-4 py-3 border-2 border-black rounded-lg shadow-lg cursor-pointer md:py-2 hover:opacity-55 shadow-black"
+          className="px-4 py-3 bg-white border-2 border-black rounded-lg shadow-lg cursor-pointer md:py-2 hover:opacity-55 shadow-black"
           onClick={() => {
             toggleModal('categories')
             setActionMenu((prev) => !prev)

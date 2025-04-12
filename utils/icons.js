@@ -1,4 +1,5 @@
 import {
+  GalleryVerticalEnd,
   House,
   ShoppingCart,
   BriefcaseBusiness,
@@ -11,6 +12,7 @@ import {
 
 // Mapeo de nombres a componentes
 export const iconMap = {
+  GalleryVerticalEnd,
   House,
   ShoppingCart,
   BriefcaseBusiness,

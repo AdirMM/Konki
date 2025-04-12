@@ -34,8 +34,6 @@ export function UIProvider({ children }) {
 
   // Funcion para abrir/cerrar modales con animacion
   const toggleModal = (modalName) => {
-    console.log(`Cambiando el estado del modal: ${modalName}`) // 🔍 Verifica que se llama correctamente
-
     setModals((prev) => {
       // Alterna el estado del modal
       return {

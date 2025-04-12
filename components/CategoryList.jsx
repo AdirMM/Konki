@@ -15,24 +15,26 @@ export function CategoryList({ setShowCategories }) {
       >
         <Plus />
       </button>
-      {categories.map((cat) => {
-        const IconComponent = iconMap[cat.icon] // Buscamos el ícono usando su nombre
-        return (
-          <li
-            key={cat.name}
-            className="relative py-2 transition-all border-blue-200 cursor-pointer hover:opacity-50 last-of-type:rounded-b-lg group border-y-1"
-            onClick={() => {
-              setCategory(cat)
-              setShowCategories(false)
-            }}
-          >
-            <span className="flex items-center justify-center gap-2">
-              {cat.name}
-              {IconComponent && <IconComponent size={18} />}
-            </span>
-          </li>
-        )
-      })}
+      {[{ name: 'Todas', icon: 'GalleryVerticalEnd' }, ...categories].map(
+        (cat) => {
+          const IconComponent = iconMap[cat.icon] // Buscamos el ícono usando su nombre
+          return (
+            <li
+              key={cat.name}
+              className="relative py-2 transition-all border-blue-200 cursor-pointer hover:opacity-50 last-of-type:rounded-b-lg group border-y-1"
+              onClick={() => {
+                setCategory(cat)
+                setShowCategories(false)
+              }}
+            >
+              <span className="flex items-center justify-center gap-2">
+                {cat.name}
+                {IconComponent && <IconComponent size={18} />}
+              </span>
+            </li>
+          )
+        }
+      )}
     </div>
   )
 }

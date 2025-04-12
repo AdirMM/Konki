@@ -12,7 +12,7 @@ export function CountMarks({ completedTasks }) {
   }, [completedTasks])
 
   return (
-    <div className="absolute z-10 flex flex-col items-center justify-center w-10/12 md:w-32 left-8 md:space-y-4 opacity-60 top-37 md:top-59 md:left-8">
+    <div className="absolute z-10 flex flex-col items-center justify-center w-10/12 md:w-32 left-9 md:space-y-4 opacity-60 top-37 md:top-59 md:left-8">
       {!drawingsExists && (
         // Contador numérico
         <motion.span
@@ -20,7 +20,7 @@ export function CountMarks({ completedTasks }) {
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.3, delay: 0.8 }} // 800ms de retraso
-          className="absolute text-3xl font-bold text-black md:top-0"
+          className="absolute text-3xl font-bold text-black -translate-x-1/2 left-1/2 md:top-0"
         >
           {completedTasks}
         </motion.span>

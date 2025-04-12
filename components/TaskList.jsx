@@ -6,7 +6,12 @@ import { iconMap } from '../utils/icons'
 export function TaskList() {
   const { tasks, toggleCompleted, setSelectedTask } = useTaskContext()
   const { showCompleted, toggleModal } = useUIContext()
-  const { categories } = useCategoryContext()
+  const { category, categories } = useCategoryContext()
+
+  const filteredTask =
+    category.name === 'Todas'
+      ? tasks
+      : tasks.filter((task) => task.category.name === category.name)
 
   const getCategoryIcon = (categoryName) => {
     const foundCategory = categories.find((cat) => cat.name === categoryName)
@@ -16,7 +21,7 @@ export function TaskList() {
   return (
     <div>
       <ul className="relative flex flex-col items-center w-11/12 mx-auto mt-50 md:mt-38 pb-50 md:pb-0">
-        {tasks.map((task) => {
+        {filteredTask.map((task) => {
           const IconComponent = getCategoryIcon(task.category.name)
 
           return (
@@ -32,7 +37,7 @@ ${
             >
               <div className="flex items-center gap-x-4">
                 <span
-                  className={`flex justify-center select-none text-center items-center gap-x-4 cursor-pointer border-b-2 px-2 shadow-lg md:px-5 leading-5 rounded-lg md:hover:px-7 transition-all duration-500 text-lg ${
+                  className={`flex justify-center select-none text-center items-center gap-x-4 cursor-pointer border-b-2 px-2 shadow-lg md:px-5 leading-5 rounded-lg md:hover:px-7 transition-all duration-500 text-xl ${
                     task.completed
                       ? 'line-through text-zinc-500 shadow-none'
                       : 'pb-1'

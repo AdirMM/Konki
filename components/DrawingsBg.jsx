@@ -24,7 +24,7 @@ export function DrawingsBg() {
     <>
       {!drawingsExists && (
         <img
-          className=" absolute w-[10rem] top-20 md:top-40 md:left-4"
+          className="absolute w-[10rem] top-20 left-28.5 md:top-40 md:left-4"
           src={dayMarks}
           alt=""
         />
@@ -33,12 +33,12 @@ export function DrawingsBg() {
       {firstTask && (
         <>
           <img
-            className="md:hidden absolute w-[9rem] bottom-60 left-5"
+            className="md:hidden absolute w-[9.5rem] top-6/12 left-7"
             src={consejo1}
             alt=""
           />
           <img
-            className="md:hidden absolute w-[10.5rem] bottom-62 right-0"
+            className="md:hidden absolute w-[10rem] top-6/12 right-3"
             src={consejo2}
             alt=""
           />

@@ -3,15 +3,17 @@ import { createContext, useState, useEffect, useContext } from 'react'
 const CategoryContext = createContext()
 
 export function CategoryProvider({ children }) {
-  const storedCategories = JSON.parse(localStorage.getItem('categories')) || [
-    { name: 'Hogar', color: '#3b82f6', icon: 'House' }, // Azul
-    { name: 'Trabajo', color: '#22c55e', icon: 'BriefcaseBusiness' }, // Verde
-    { name: 'Estudio', color: '#ef4444', icon: 'GraduationCap' }, // Rojo
-  ] // Ahora es un estado
+  const defaultCategories = [
+    { name: 'Todas', color: '#000000', icon: 'GalleryVerticalEnd' },
+    { name: 'Hogar', color: '#3b82f6', icon: 'House' },
+    { name: 'Trabajo', color: '#22c55e', icon: 'BriefcaseBusiness' },
+    { name: 'Estudio', color: '#ef4444', icon: 'GraduationCap' },
+  ]
+  const [category, setCategory] = useState(defaultCategories[0]) // 'Todas'
+
+  const storedCategories =
+    JSON.parse(localStorage.getItem('categories')) || defaultCategories
   const [categories, setCategories] = useState(storedCategories)
-  const [category, setCategory] = useState(
-    storedCategories[0] || { name: '', color: '#3b82f6' }
-  ) // ✅ Valor inicial seguro
 
   // Guardar en localstorage cuando categories cambien
   useEffect(() => {

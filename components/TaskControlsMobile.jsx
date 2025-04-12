@@ -5,9 +5,7 @@ export function TaskControlsMobile() {
   const { toggleModal, showCompleted, setShowCompleted } = useUIContext()
 
   return (
-    <div
-      className={`fixed bottom-0 left-0 z-20 flex flex-col items-center w-full gap-y-5 px-5 pt-5`}
-    >
+    <div className={`fixed bottom-0 z-20 flex flex-col items-center gap-y-5`}>
       {/* Botón flotante para agregar tarea */}
       <button
         className="z-10 p-5 bg-white border-2 rounded-full shadow-lg cursor-pointer shadow-black backdrop-blur-lg"

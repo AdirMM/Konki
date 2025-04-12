@@ -5,4 +5,7 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   base: '/Konki/', // Nombre de tu repositorio
   plugins: [react(), tailwindcss()],
+  build: {
+    minify: 'esbuild', // o 'terser' si necesitas más compresión
+  },
 })

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-
 import { iconMap } from '../../utils/icons'
 import { Plus } from 'lucide-react'
 import { CategoryListMobile } from '../CategoryListMobile'
@@ -10,9 +9,10 @@ import { useCategoryContext } from '../../context/CategoryContext'
 
 export function EditTaskModal() {
   const { selectedTask, editTask, removeTask } = useTaskContext()
-  const { modals, toggleModal } = useUIContext()
-  const { categories, category } = useCategoryContext()
   const [showCategories, setShowCategories] = useState(true)
+
+  const { modals, toggleModal } = useUIContext()
+  const { category } = useCategoryContext()
 
   const [isEditing, setIsEditing] = useState(false)
   const [editedTask, setEditedTask] = useState('')
@@ -75,7 +75,7 @@ export function EditTaskModal() {
       <div className="flex flex-col pb-5 gap-y-2">
         <textarea
           name=""
-          className="h-32 px-2 mx-auto text-lg border-2 rounded-lg w-2xs opacity-80 focus:opacity-100"
+          className="h-32 px-2 mx-auto text-xl border-2 rounded-lg w-2xs opacity-80 focus:opacity-100"
           value={editedTask}
           maxLength={maxLength}
           onKeyDown={handleKeyDown}
@@ -97,7 +97,7 @@ export function EditTaskModal() {
         >
           <p className="font-semibold ">Categoria actual</p>
           <div className="flex w-1/2 gap-5 py-2 mx-auto">
-            <span className="flex items-center justify-center px-4 py-1 mx-auto border-2 rounded-lg shadow-lg cursor-pointer gap-x-1 md:py-2 backdrop-blur-lg ">
+            <span className="flex items-center justify-center px-4 py-1 mx-auto border-2 border-dashed rounded-lg shadow-lg cursor-pointer gap-x-1 md:py-2 backdrop-blur-lg ">
               {category.name}
               {IconComponent && <IconComponent size={18} />}
             </span>

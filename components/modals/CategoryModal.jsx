@@ -53,7 +53,11 @@ export function CategoryModal() {
 
   const handleDelete = () => {
     deleteCategory(selectedCategory.name)
-    toggleModal()
+    toggleModal('category')
+
+    setTimeout(() => {
+      toggleModal('categories')
+    }, 200)
   }
 
   const handleKeyDown = (e) => {
@@ -74,7 +78,7 @@ export function CategoryModal() {
         <p className="text-xl">Nombre de Categoría</p>
         <input
           type="text"
-          className="w-64 px-2 py-1 text-center border-2 rounded-lg"
+          className="w-64 px-2 py-1 text-xl text-center border-2 rounded-lg"
           placeholder="Ej. Compras, Familia..."
           value={newCategory}
           maxLength={10}

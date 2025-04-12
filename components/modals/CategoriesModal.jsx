@@ -52,7 +52,7 @@ export function CategoriesModal() {
             return (
               <li key={index}>
                 <span
-                  className="flex flex-row items-center justify-center py-2 leading-5 text-black border-b-2 rounded-lg cursor-pointer gap-x-2"
+                  className="flex flex-row items-center justify-center py-2 leading-5 text-black rounded-lg cursor-pointer border-y-2 gap-x-2"
                   style={{ borderColor: cat.color }}
                   onClick={() => handleEditCategory(cat)}
                 >
