@@ -3,4 +3,4 @@ from django.apps import AppConfig
 
 class KonkiConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'konki'
+    name = 'apps.konki'
