@@ -6,10 +6,26 @@ html, body {
   display: flex;
   flex-direction: column;
   background-image: url('./assets/notebook.avif');
+  /* background-image: url('./assets/bgblack.jpg'); */
   background-repeat: repeat-y;
-  background-size: cover;
+  background-size: contain;
+  background-attachment: fixed;
   background-position: center;
   overflow-x: hidden;
+  user-select: none;
+
+}
+
+@media (min-width: 768px) {
+  html, body {
+    background-image: url('./assets/notebook.avif');
+    background-repeat: repeat-y;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    user-select: none;
+  
+  }
 }
 
 #root {
@@ -25,6 +41,7 @@ main {
   align-items: center;
   justify-content: flex-start;
   width: 100%;
+  
 }
 
 .bg-image {
