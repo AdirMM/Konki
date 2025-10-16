@@ -76,14 +76,13 @@ const styles = StyleSheet.create({
   },
   relativeDate: {
     paddingHorizontal: 12,
-    marginLeft: 12,
     borderRadius: 6,
-    fontSize: 17,
+    fontSize: 18,
+    marginVertical: 15,
     color: '#71717a',
     backgroundColor: '#e4e4e7',
     overflow: 'hidden',
-    maxHeight: 32,
-    marginBottom: 20,
+    fontFamily: 'Geo_400Regular',
   },
   taskList: {
     width: '100%',

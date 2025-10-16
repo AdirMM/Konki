@@ -8,100 +8,94 @@ import {
   Text,
   TouchableOpacity,
   Dimensions,
-  ScrollView,
+  FlatList,
 } from 'react-native'
 import { Shadow } from 'react-native-shadow-2'
 import { useCategoryContext } from '../../context/CategoryContext'
+import { useTaskContext } from '../../context/TaskContext'
 
 const { width, height } = Dimensions.get('window')
 
 export function FilterCategory() {
   const [showFilter, setShowFilter] = useState(false)
-  const rotateAnim = useRef(new Animated.Value(0)).current
-  const slideY = useRef(new Animated.Value(-40)).current
-  const slideX = useRef(new Animated.Value(40)).current
-  const opacityAnim = useRef(new Animated.Value(0)).current
-
+  const animValue = useRef(new Animated.Value(0)).current
   const { categories, setCategory } = useCategoryContext()
+  const { tasks } = useTaskContext()
+
+  const hasTasks = tasks.length > 0
 
   const handleToggle = () => {
     const isOpening = !showFilter
+    setShowFilter(true)
 
-    Animated.timing(rotateAnim, {
+    Animated.timing(animValue, {
       toValue: isOpening ? 1 : 0,
-      duration: 250,
+      duration: 300,
       useNativeDriver: true,
-    }).start()
-
-    if (isOpening) {
-      setShowFilter(true)
-
-      Animated.parallel([
-        Animated.timing(slideY, {
-          toValue: 0,
-          duration: 400,
-          useNativeDriver: false,
-        }),
-        Animated.timing(slideX, {
-          toValue: 0,
-          duration: 400,
-          useNativeDriver: false,
-        }),
-        Animated.timing(opacityAnim, {
-          toValue: 1,
-          duration: 400,
-          useNativeDriver: false,
-        }),
-      ]).start()
-    } else {
-      Animated.parallel([
-        Animated.timing(slideY, {
-          toValue: -40,
-          duration: 200,
-          useNativeDriver: false,
-        }),
-        Animated.timing(slideX, {
-          toValue: 40,
-          duration: 200,
-          useNativeDriver: false,
-        }),
-        Animated.timing(opacityAnim, {
-          toValue: 0,
-          duration: 200,
-          useNativeDriver: false,
-        }),
-      ]).start(() => {
-        setShowFilter(false)
-      })
-    }
+    }).start(() => {
+      if (!isOpening) setShowFilter(false)
+    })
   }
 
-  const rotateInterpolation = rotateAnim.interpolate({
+  const rotate = animValue.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0deg', '180deg'],
+    outputRange: ['0deg', '-90deg'],
+  })
+
+  const slideY = animValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-40, 0],
+  })
+
+  const slideX = animValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: [40, 0],
+  })
+
+  const opacity = animValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 1],
   })
 
   const handleSelectCategory = (cat) => {
+    if (tasks.length === 0 && cat.name !== 'Todas') return // Solo "Todas" clickeable
     setCategory(cat)
     handleToggle()
   }
 
+  const renderItem = ({ item }) => {
+    const isDisabled = tasks.length === 0 && item.name !== 'Todas'
+    return (
+      <Shadow distance={6} startColor="#000" offset={[0, 3]}>
+        <TouchableOpacity
+          style={[
+            styles.menuButton,
+            { opacity: isDisabled ? 0.5 : 1 }, // Atenúa si está deshabilitada
+          ]}
+          onPress={() => handleSelectCategory(item)}
+          disabled={isDisabled}
+        >
+          <View style={styles.buttonContent}>
+            <Feather name={item.iconName} size={20} color={item.color} />
+            <Text style={styles.buttonText}>{item.name}</Text>
+          </View>
+        </TouchableOpacity>
+      </Shadow>
+    )
+  }
+
   return (
     <>
-      {/* Botón visible */}
       <View style={styles.container}>
         <Shadow distance={5} startColor="#000" offset={[0, 3]}>
           <Pressable onPress={handleToggle}>
-            <Animated.View
-              style={{ transform: [{ rotate: rotateInterpolation }] }}
-            >
+            <Animated.View style={{ transform: [{ rotate }] }}>
               <Ionicons name="filter" size={38} color="white" />
             </Animated.View>
           </Pressable>
         </Shadow>
       </View>
 
-      {/* Menú flotante */}
       {showFilter && (
         <>
           <Pressable style={styles.backdrop} onPress={handleToggle} />
@@ -110,40 +104,23 @@ export function FilterCategory() {
             style={[
               styles.dropdown,
               {
-                opacity: opacityAnim,
+                opacity,
                 transform: [{ translateY: slideY }, { translateX: slideX }],
               },
             ]}
           >
-            {/* 🔽 Scroll en caso de muchos items */}
-            <ScrollView
-              style={styles.scrollContainer}
-              contentContainerStyle={styles.scrollContent}
+            <FlatList
+              data={categories}
+              keyExtractor={(item) => item.id}
+              renderItem={renderItem}
               showsVerticalScrollIndicator={false}
-            >
-              {categories.map((cat) => (
-                <Shadow
-                  key={cat.name}
-                  distance={6}
-                  startColor="#000"
-                  offset={[0, 3]}
-                >
-                  <TouchableOpacity
-                    style={styles.menuButton}
-                    onPress={() => handleSelectCategory(cat)}
-                  >
-                    <View style={styles.buttonContent}>
-                      <Feather
-                        name={cat.iconName}
-                        size={20}
-                        color={cat.color}
-                      />
-                      <Text style={styles.buttonText}>{cat.name}</Text>
-                    </View>
-                  </TouchableOpacity>
-                </Shadow>
-              ))}
-            </ScrollView>
+              contentContainerStyle={styles.scrollContent}
+              style={styles.scrollContainer}
+              removeClippedSubviews
+              initialNumToRender={5}
+              maxToRenderPerBatch={5}
+              windowSize={3}
+            />
           </Animated.View>
         </>
       )}
@@ -152,10 +129,7 @@ export function FilterCategory() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    position: 'relative',
-    zIndex: 1,
-  },
+  container: { position: 'relative', zIndex: 1 },
   backdrop: {
     position: 'absolute',
     top: 0,
@@ -170,14 +144,11 @@ const styles = StyleSheet.create({
     top: height * 0.1,
     right: -10,
     zIndex: 1000,
-    maxHeight: height * 0.5, // 🔽 límite visual del scroll
+    maxHeight: height * 0.5,
     borderRadius: 12,
     overflow: 'hidden',
   },
-  scrollContainer: {
-    width: width * 0.45,
-    borderRadius: 12,
-  },
+  scrollContainer: { width: width * 0.45, borderRadius: 12 },
   scrollContent: {
     alignItems: 'center',
     paddingVertical: height * 0.02,

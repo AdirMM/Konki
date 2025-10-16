@@ -14,6 +14,7 @@ import {
 import { Shadow } from 'react-native-shadow-2'
 import { AntDesign, Entypo, Feather } from '@expo/vector-icons'
 import { CustomModal } from './CustomModal'
+import { CustomButton } from './CustomButton' // ✅ Importamos el nuevo botón
 import { iconList } from '../../utils/icons'
 import { useUIContext } from '../../context/UIContext'
 import { useCategoryContext } from '../../context/CategoryContext'
@@ -27,8 +28,13 @@ const icons = iconList
 export function CategoryModal() {
   const { addCategory, categories, updateCategory, deleteCategory } =
     useCategoryContext()
-  const { modals, toggleModal, selectedCategory, setSelectedCategory } =
-    useUIContext()
+  const {
+    modals,
+    toggleModal,
+    selectedCategory,
+    setSelectedCategory,
+    switchModal,
+  } = useUIContext()
 
   const [newCategory, setNewCategory] = useState('')
   const [selectedColor, setSelectedColor] = useState('#3b82f6')
@@ -36,7 +42,6 @@ export function CategoryModal() {
   const [iconError, setIconError] = useState(false)
   const [showIconError, setShowIconError] = useState(false)
 
-  // Persistente para animaciones
   const iconErrorOpacity = useRef(new Animated.Value(0)).current
 
   useEffect(() => {
@@ -60,7 +65,7 @@ export function CategoryModal() {
 
   useEffect(() => {
     if (!selectedCategory) return
-    const updated = categories.find((cat) => cat.name === selectedCategory.name)
+    const updated = categories.find((cat) => cat.id === selectedCategory.id)
     if (updated) setSelectedCategory(updated)
   }, [categories])
 
@@ -80,32 +85,29 @@ export function CategoryModal() {
 
   const handleCategory = () => {
     if (newCategory.trim() === '') return
-
     if (!selectedIcon || selectedIcon.trim() === '') {
       setIconError(true)
       return
     }
 
     if (selectedCategory) {
-      updateCategory({
+      const updatedCat = {
+        ...selectedCategory,
         name: newCategory,
         color: selectedColor,
         iconName: selectedIcon,
-      })
-      setSelectedCategory({
-        name: newCategory,
-        color: selectedColor,
-        iconName: selectedIcon,
-      })
-      toggleModal('category')
+      }
+      updateCategory(updatedCat)
+      setSelectedCategory(updatedCat)
+      switchModal('category', 'categories')
     } else {
-      addCategory({
+      const newCat = {
         name: newCategory,
         color: selectedColor,
         iconName: selectedIcon,
-      })
-      toggleModal('category')
-      setTimeout(() => toggleModal('addTask'), 200)
+      }
+      addCategory(newCat)
+      switchModal('category', 'addTask')
     }
 
     setNewCategory('')
@@ -116,8 +118,9 @@ export function CategoryModal() {
   }
 
   const handleDelete = () => {
-    deleteCategory(selectedCategory.name)
-    toggleModal('category')
+    if (!selectedCategory) return
+    deleteCategory(selectedCategory.id)
+    switchModal('category', 'categories')
   }
 
   const handleKeyPress = ({ nativeEvent }) => {
@@ -135,8 +138,6 @@ export function CategoryModal() {
     '#10b981',
     '#6366f1',
     '#f24ace',
-    '#6b7280',
-    '#000000',
   ]
 
   return (
@@ -146,6 +147,9 @@ export function CategoryModal() {
       onClose={() => {
         toggleModal('category')
         setSelectedCategory(null)
+        setNewCategory('')
+        setSelectedColor('#3b82f6')
+        setSelectedIcon('')
         setIconError(false)
       }}
       title="Categoría"
@@ -179,7 +183,7 @@ export function CategoryModal() {
           </ImageBackground>
         </Shadow>
 
-        {/* --- Colores siempre visibles --- */}
+        {/* --- Colores --- */}
         <Text style={styles.label}>Elige un color</Text>
         <View style={styles.colorContainer}>
           {colors.map((color) => (
@@ -221,7 +225,7 @@ export function CategoryModal() {
           </Animated.View>
         )}
 
-        {/* --- Íconos siempre visibles --- */}
+        {/* --- Íconos --- */}
         <Text style={styles.label}>Elige un ícono</Text>
         <View style={styles.iconsContainer}>
           {icons.map(({ name, component: IconComponent }) => {
@@ -244,28 +248,37 @@ export function CategoryModal() {
           })}
         </View>
 
-        {/* --- Botones --- */}
+        {/* --- Botones (usando CustomButton) --- */}
         <View style={styles.buttonsContainer}>
-          <TouchableOpacity style={styles.saveButton} onPress={handleCategory}>
-            {selectedCategory ? (
-              <Feather name="edit-2" size={responsiveSize(22)} color="white" />
-            ) : (
-              <Entypo name="plus" size={responsiveSize(28)} color="white" />
-            )}
-          </TouchableOpacity>
-
           {selectedCategory && (
-            <TouchableOpacity
-              style={styles.deleteButton}
+            <CustomButton
+              icon={
+                <AntDesign
+                  name="delete"
+                  size={responsiveSize(22)}
+                  color="white"
+                />
+              }
+              color="#ce0101"
               onPress={handleDelete}
-            >
-              <AntDesign
-                name="delete"
-                size={responsiveSize(22)}
-                color="white"
-              />
-            </TouchableOpacity>
+            />
           )}
+
+          <CustomButton
+            icon={
+              selectedCategory ? (
+                <Feather
+                  name="edit-2"
+                  size={responsiveSize(22)}
+                  color="white"
+                />
+              ) : (
+                <Entypo name="plus" size={responsiveSize(28)} color="white" />
+              )
+            }
+            color="black"
+            onPress={handleCategory}
+          />
         </View>
       </View>
 
@@ -321,6 +334,7 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   colorContainer: {
+    width: '90%',
     justifyContent: 'center',
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -330,11 +344,12 @@ const styles = StyleSheet.create({
     width: responsiveSize(29),
     height: responsiveSize(29),
     borderRadius: responsiveSize(10),
-    borderWidth: responsiveSize(2),
+    borderWidth: responsiveSize(3),
     borderColor: 'transparent',
   },
   colorSelected: { borderColor: 'black' },
   iconsContainer: {
+    width: '90%',
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
@@ -344,32 +359,17 @@ const styles = StyleSheet.create({
     width: responsiveSize(30),
     height: responsiveSize(30),
     borderRadius: responsiveSize(8),
-    borderWidth: responsiveSize(2),
+    borderBottomWidth: responsiveSize(3),
+    opacity: 0.4,
     borderColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  iconSelected: { borderColor: 'black' },
+  iconSelected: { borderColor: 'black', opacity: 1 },
   buttonsContainer: {
     flexDirection: 'row',
     gap: responsiveSize(15),
     marginTop: responsiveSize(50),
-  },
-  saveButton: {
-    width: '34%',
-    alignSelf: 'center',
-    backgroundColor: 'black',
-    paddingVertical: responsiveSize(18),
-    borderRadius: responsiveSize(40),
-    alignItems: 'center',
-  },
-  deleteButton: {
-    width: '34%',
-    alignSelf: 'center',
-    backgroundColor: '#ce0101',
-    paddingVertical: responsiveSize(18),
-    borderRadius: responsiveSize(40),
-    alignItems: 'center',
   },
   flowerImage: {
     width: responsiveSize(100),

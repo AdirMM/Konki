@@ -55,17 +55,17 @@ export function Menu() {
       Animated.parallel([
         Animated.timing(slideY, {
           toValue: -40,
-          duration: 200,
+          duration: 300,
           useNativeDriver: false,
         }),
         Animated.timing(slideX, {
           toValue: -40,
-          duration: 200,
+          duration: 300,
           useNativeDriver: false,
         }),
         Animated.timing(opacityAnim, {
           toValue: 0,
-          duration: 200,
+          duration: 300,
           useNativeDriver: false,
         }),
       ]).start(() => setActionMenu(false))

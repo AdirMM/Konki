@@ -16,6 +16,7 @@
     "expo": "~53.0.23",
     "expo-blur": "~14.1.4",
     "expo-font": "~13.3.2",
+    "expo-linear-gradient": "~14.1.5",
     "expo-status-bar": "~2.2.3",
     "react": "19.0.0",
     "react-native": "0.79.5",
@@ -23,6 +24,7 @@
     "react-native-safe-area-context": "5.4.0",
     "react-native-shadow-2": "^7.1.1",
     "react-native-svg": "15.11.2",
+    "react-native-uuid": "^2.0.3",
     "react-native-webview": "13.13.5"
   },
   "devDependencies": {

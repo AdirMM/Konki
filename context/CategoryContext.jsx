@@ -1,66 +1,80 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import uuid from 'react-native-uuid'
 
 const defaultCategories = [
-  { name: 'Todas', color: '#9ca3af', iconName: 'list' },
-  { name: 'Hogar', color: '#3b82f6', iconName: 'home' },
-  { name: 'Trabajo', color: '#22c55e', iconName: 'briefcase' },
-  { name: 'Estudio', color: '#ef4444', iconName: 'book' },
-  { name: 'Compras', color: '#f59e0b', iconName: 'shopping-cart' },
+  { id: uuid.v4(), name: 'Todas', color: '#9ca3af', iconName: 'list' },
+  { id: uuid.v4(), name: 'Hogar', color: '#3b82f6', iconName: 'home' },
+  { id: uuid.v4(), name: 'Trabajo', color: '#22c55e', iconName: 'briefcase' },
+  { id: uuid.v4(), name: 'Estudio', color: '#ef4444', iconName: 'book' },
+  {
+    id: uuid.v4(),
+    name: 'Compras',
+    color: '#f59e0b',
+    iconName: 'shopping-cart',
+  },
 ]
-
 const CategoryContext = createContext()
 
 export const CategoryProvider = ({ children }) => {
   const [categories, setCategories] = useState(defaultCategories)
   const [category, setCategory] = useState(defaultCategories[0])
+  const [maxCategories, setMaxCategories] = useState(15)
 
-  // ✅ Cargar categorías de AsyncStorage al iniciar la app
+  // ✅ Cargar categorías desde AsyncStorage
   useEffect(() => {
     const loadCategories = async () => {
       try {
-        const storedCategories = await AsyncStorage.getItem('@categories')
-        if (storedCategories) {
-          const parsed = JSON.parse(storedCategories)
+        const stored = await AsyncStorage.getItem('@categories')
+        if (stored) {
+          const parsed = JSON.parse(stored)
           setCategories(parsed)
           setCategory(parsed[0] || null)
         }
       } catch (error) {
-        console.log('Error loading categories', error)
+        console.log('Error al cargar categorías:', error)
       }
     }
     loadCategories()
   }, [])
 
-  // ✅ Guardar categorías automáticamente cada vez que cambian
+  // ✅ Guardar automáticamente cada vez que cambian
   useEffect(() => {
     const saveCategories = async () => {
       try {
         await AsyncStorage.setItem('@categories', JSON.stringify(categories))
       } catch (error) {
-        console.log('Error saving categories', error)
+        console.log('Error al guardar categorías:', error)
       }
     }
     saveCategories()
   }, [categories])
 
+  // ➕ Agregar categoría con límite de 16
   const addCategory = (newCategory) => {
-    setCategories((prev) => [...prev, newCategory])
+    if (categories.length >= maxCategories) {
+      console.warn(
+        `No se puede agregar más categorías. Límite máximo: ${maxCategories}`
+      )
+      return
+    }
+    const categoryWithId = { id: uuid.v4(), ...newCategory }
+    setCategories((prev) => [...prev, categoryWithId])
   }
 
+  // ✏️ Actualizar categoría
   const updateCategory = (updatedCategory) => {
     setCategories((prev) =>
-      prev.map((cat) =>
-        cat.name === updatedCategory.name ? updatedCategory : cat
-      )
+      prev.map((cat) => (cat.id === updatedCategory.id ? updatedCategory : cat))
     )
   }
 
-  const deleteCategory = (name) => {
-    const updatedCategories = categories.filter((cat) => cat.name !== name)
-    setCategories(updatedCategories)
-    if (category.name === name) {
-      setCategory(updatedCategories[0] || null)
+  // ❌ Eliminar categoría
+  const deleteCategory = (id) => {
+    const updated = categories.filter((cat) => cat.id !== id)
+    setCategories(updated)
+    if (category?.id === id) {
+      setCategory(updated[0] || null)
     }
   }
 
@@ -73,6 +87,7 @@ export const CategoryProvider = ({ children }) => {
         addCategory,
         updateCategory,
         deleteCategory,
+        maxCategories,
       }}
     >
       {children}

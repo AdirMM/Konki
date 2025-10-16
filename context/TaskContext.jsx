@@ -12,34 +12,21 @@ export function TaskProvider({ children }) {
 
   const hasCompletedTasks = tasks.some((task) => task.completed)
 
-  const addTask = async (customCategory = category) => {
-    if (taskInput.trim() === '') return
+  const addTask = async (text, selectedCategory = category) => {
+    if (!text.trim()) return
 
-    // Validar que la categoría tenga un nombre
-    if (!customCategory?.name) {
-      console.warn('No se puede crear una tarea sin categoría válida.')
-      return
-    }
-
-    const { id, name, iconName, color } = customCategory
+    const { id, name, iconName, color } = selectedCategory
 
     const newTask = {
       id: Date.now(),
-      text: taskInput.trim(),
-      category: {
-        id: id ?? Date.now(), // por si el id de categoría no viene
-        name,
-        iconName,
-        color,
-      },
+      text: text.trim(),
+      category: { id, name, iconName, color },
       completed: false,
       createAt: new Date().toISOString(),
     }
 
     const updatedTasks = [...tasks, newTask]
     setTasks(updatedTasks)
-    setTaskInput('')
-
     try {
       await AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks))
     } catch (error) {

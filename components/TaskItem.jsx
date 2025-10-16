@@ -169,7 +169,7 @@ export function TaskItem({
 
   if (!isVisible) return null
 
-  const iconName = task.category?.iconName || 'layers'
+  const iconName = task.category?.iconName || 'list'
   const iconColor = task.category?.color || '#000'
 
   return (
@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
   container: {
     position: 'relative',
     width: 270,
-    height: 80,
+    height: 90,
     borderRadius: 16,
     overflow: 'visible',
     backgroundColor: '#111',
@@ -255,16 +255,16 @@ const styles = StyleSheet.create({
     padding: 18,
   },
   taskText: {
-    fontSize: 25,
+    fontSize: 27,
     textAlign: 'center',
     color: '#fff',
     flex: 1,
-    padding: 1,
+    paddingLeft: 1,
     fontFamily: 'Geo_400Regular',
   },
   deleteButton: {
     position: 'absolute',
-    top: '12%',
+    top: '15%',
     left: 105,
     backgroundColor: '#dc2626',
     paddingVertical: 6,

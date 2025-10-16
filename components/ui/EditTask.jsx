@@ -9,7 +9,7 @@ import {
   Platform,
   StyleSheet,
   ImageBackground,
-  useWindowDimensions,
+  Dimensions,
 } from 'react-native'
 import { useCategoryContext } from '../../context/CategoryContext'
 import { useTaskContext } from '../../context/TaskContext'
@@ -17,31 +17,34 @@ import { useUIContext } from '../../context/UIContext'
 import { Feather, AntDesign } from '@expo/vector-icons'
 import { Shadow } from 'react-native-shadow-2'
 import { CustomModal } from './CustomModal'
+import { CustomButton } from './CustomButton'
 import { CategoryList } from './CategoryList'
 
+const { width, height } = Dimensions.get('window')
 const guidelineBaseWidth = 375
+const responsiveSize = (size) => (width / guidelineBaseWidth) * size
 
 export function EditTask() {
   const { selectedTask, editTask, removeTask } = useTaskContext()
   const { modals, toggleModal } = useUIContext()
   const { category } = useCategoryContext()
-  const { width, height } = useWindowDimensions()
-
-  // 🔹 Función responsiva como en AddTask
-  const responsiveSize = (size) => (width / guidelineBaseWidth) * size
 
   const [editedTask, setEditedTask] = useState('')
   const [selectedCategory, setSelectedCategory] = useState(null)
-  const maxLength = 130
+  const maxLength = 100
 
   useEffect(() => {
-    setEditedTask(selectedTask?.text || '')
-    setSelectedCategory(selectedTask?.category)
-  }, [selectedTask])
+    if (modals?.editTask?.isOpen && selectedTask) {
+      setEditedTask(selectedTask.text || '')
+      setSelectedCategory(selectedTask.category || category)
+    }
+  }, [modals?.editTask?.isOpen, selectedTask])
 
-  useEffect(() => {
-    setSelectedCategory(category)
-  }, [category])
+  const handleClose = () => {
+    toggleModal('editTask')
+    setEditedTask('')
+    setSelectedCategory(null)
+  }
 
   const handleSaveTask = () => {
     if (!editedTask.trim()) return
@@ -49,21 +52,19 @@ export function EditTask() {
       text: editedTask,
       category: selectedCategory,
     })
-    toggleModal('editTask')
+    handleClose()
   }
 
   const handleRemoveTask = () => {
     removeTask(selectedTask.id)
-    toggleModal('editTask')
+    handleClose()
   }
-
-  const styles = createStyles(responsiveSize, width, height)
 
   return (
     <CustomModal
       modalName="editTask"
       isOpen={modals?.editTask?.isOpen || false}
-      onClose={() => toggleModal('editTask')}
+      onClose={handleClose}
       title="Editar Tarea"
     >
       <KeyboardAvoidingView
@@ -71,24 +72,23 @@ export function EditTask() {
         style={styles.modalView}
       >
         <Text style={styles.charCount}>
-          {editedTask.length}/{maxLength} caracteres
+          {(editedTask || '').length}/{maxLength} caracteres
         </Text>
 
         <Shadow
-          distance={3}
-          startColor="rgba(0,0,0,.9)"
-          finalColor="rgba(0,0,0,0)"
-          offset={[0, 5]}
-          radius={styles.borderRadius}
-          containerViewStyle={{ marginBottom: responsiveSize(20) }}
+          distance={10}
+          startColor="rgba(0,0,0,1)"
+          offset={[-10, 8]}
+          radius={responsiveSize(10)}
+          style={{ marginBottom: responsiveSize(8) }}
         >
           <ImageBackground
             source={require('../../assets/notebook.jpg')}
             style={styles.inputBackground}
-            imageStyle={{ borderRadius: styles.borderRadius }}
+            imageStyle={{ borderRadius: responsiveSize(10) }}
           >
             <TextInput
-              value={editedTask}
+              value={editedTask || ''}
               maxLength={maxLength}
               onChangeText={setEditedTask}
               onSubmitEditing={handleSaveTask}
@@ -104,11 +104,11 @@ export function EditTask() {
         <Text style={styles.categoryText}>Categoría</Text>
 
         <Shadow
-          distance={3}
-          startColor="rgba(0,0,0,.9)"
+          distance={7}
+          startColor="rgba(0,0,0,1)"
           finalColor="rgba(0,0,0,0)"
-          offset={[0, 1]}
-          radius={styles.borderRadius}
+          offset={[-5, 8]}
+          radius={responsiveSize(10)}
         >
           <View style={styles.shadowContainer}>
             <CategoryList
@@ -119,19 +119,37 @@ export function EditTask() {
         </Shadow>
 
         <View style={styles.buttonsContainer}>
-          <TouchableOpacity style={styles.saveButton} onPress={handleSaveTask}>
-            <Feather name="edit-2" size={styles.iconSize} color="white" />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.deleteButton}
+          <CustomButton
+            icon={
+              <AntDesign
+                name="delete"
+                size={responsiveSize(23)}
+                color="white"
+              />
+            }
+            color="#ab0000"
             onPress={handleRemoveTask}
-          >
-            <AntDesign name="delete" size={styles.iconSize} color="white" />
-          </TouchableOpacity>
+          />
+
+          {/* Botón Editar */}
+          <CustomButton
+            icon={
+              <Feather name="edit-2" size={responsiveSize(23)} color="white" />
+            }
+            onPress={handleSaveTask}
+          />
         </View>
       </KeyboardAvoidingView>
 
+      {/* Imagenes decorativas */}
+      <Image
+        source={require('../../assets/cloud.png')}
+        style={[styles.cloudImage, { left: responsiveSize(-10) }]}
+      />
+      <Image
+        source={require('../../assets/cloud.png')}
+        style={[styles.cloudImage, { right: responsiveSize(-10) }]}
+      />
       <Image
         source={require('../../assets/gatito1.png')}
         style={styles.gatito}
@@ -146,98 +164,92 @@ export function EditTask() {
   )
 }
 
-const createStyles = (responsiveSize, width, height) => {
-  const inputWidth = width * 0.85
-  const inputHeight = height * 0.22
-  const buttonWidth = width * 0.34
-  const buttonPadding = responsiveSize(14)
-  const borderRadius = responsiveSize(10)
-  const iconSize = responsiveSize(23)
-
-  return StyleSheet.create({
-    modalView: {
-      borderRadius: responsiveSize(12),
-      alignItems: 'stretch',
-      zIndex: 1000,
-      width: width * 0.86,
-    },
-    charCount: {
-      textAlign: 'right',
-      color: '#646464',
-      marginBottom: responsiveSize(10),
-      fontFamily: 'Geo_400Regular',
-      fontSize: responsiveSize(17),
-    },
-    inputBackground: {
-      borderWidth: responsiveSize(2.5),
-      overflow: 'hidden',
-      backgroundColor: 'transparent',
-      width: inputWidth,
-      minHeight: inputHeight,
-      borderRadius,
-    },
-    textInput: {
-      flex: 1,
-      padding: responsiveSize(10),
-      fontSize: responsiveSize(29),
-      letterSpacing: 1.2,
-      textAlignVertical: 'top',
-      backgroundColor: 'transparent',
-      color: '#000',
-      fontFamily: 'Geo_400Regular',
-    },
-    shadowContainer: {
-      backgroundColor: 'white',
-      borderWidth: responsiveSize(2),
-      borderColor: '#111',
-      height: responsiveSize(60),
-      marginBottom: responsiveSize(40),
-      borderRadius,
-    },
-    buttonsContainer: {
-      flexDirection: 'row',
-      gap: responsiveSize(15),
-      justifyContent: 'center',
-    },
-    categoryText: {
-      color: '#000',
-      textAlign: 'center',
-      fontFamily: 'Geo_400Regular',
-      fontSize: responsiveSize(19),
-      marginTop: responsiveSize(20),
-      marginBottom: responsiveSize(10),
-    },
-    saveButton: {
-      alignSelf: 'center',
-      backgroundColor: 'black',
-      alignItems: 'center',
-      width: buttonWidth,
-      paddingVertical: buttonPadding,
-      borderRadius: buttonWidth * 0.6,
-    },
-    deleteButton: {
-      alignSelf: 'center',
-      backgroundColor: '#ce0101',
-      alignItems: 'center',
-      width: buttonWidth,
-      paddingVertical: buttonPadding,
-      borderRadius: buttonWidth * 0.6,
-    },
-    iconSize,
-    borderRadius,
-    gatito: {
-      width: responsiveSize(80),
-      height: responsiveSize(80),
-      position: 'absolute',
-      bottom: responsiveSize(20),
-      left: responsiveSize(40),
-    },
-    tree: {
-      width: responsiveSize(90),
-      height: responsiveSize(90),
-      position: 'absolute',
-      bottom: responsiveSize(20),
-      right: responsiveSize(30),
-    },
-  })
-}
+const styles = StyleSheet.create({
+  modalView: {
+    width: '90%',
+    borderRadius: responsiveSize(12),
+    alignItems: 'center',
+    zIndex: 1000,
+  },
+  charCount: {
+    color: '#646464',
+    marginBottom: responsiveSize(5),
+    fontFamily: 'Geo_400Regular',
+    fontSize: responsiveSize(17),
+  },
+  inputBackground: {
+    width: width * 0.85,
+    minHeight: height * 0.22,
+    borderWidth: responsiveSize(2.5),
+    borderRadius: responsiveSize(10),
+    overflow: 'hidden',
+  },
+  textInput: {
+    flex: 1,
+    padding: responsiveSize(10),
+    fontSize: responsiveSize(29),
+    letterSpacing: 1.2,
+    textAlignVertical: 'top',
+    backgroundColor: 'transparent',
+    color: '#000',
+    fontFamily: 'Geo_400Regular',
+  },
+  shadowContainer: {
+    backgroundColor: 'white',
+    borderWidth: responsiveSize(2),
+    borderColor: '#111',
+    height: responsiveSize(60),
+    marginBottom: responsiveSize(40),
+    borderRadius: responsiveSize(10),
+  },
+  buttonsContainer: {
+    flexDirection: 'row',
+    gap: responsiveSize(25),
+    justifyContent: 'center',
+  },
+  categoryText: {
+    color: '#000',
+    textAlign: 'center',
+    fontFamily: 'Geo_400Regular',
+    fontSize: responsiveSize(24),
+    marginTop: responsiveSize(20),
+    marginBottom: responsiveSize(10),
+  },
+  saveButton: {
+    alignSelf: 'center',
+    backgroundColor: 'black',
+    alignItems: 'center',
+    paddingHorizontal: responsiveSize(40),
+    paddingVertical: responsiveSize(11),
+    borderRadius: responsiveSize(20),
+  },
+  deleteButton: {
+    alignSelf: 'center',
+    backgroundColor: '#ab0000',
+    alignItems: 'center',
+    paddingHorizontal: responsiveSize(40),
+    paddingVertical: responsiveSize(11),
+    borderRadius: responsiveSize(20),
+  },
+  gatito: {
+    width: responsiveSize(70),
+    height: responsiveSize(70),
+    position: 'absolute',
+    bottom: responsiveSize(90),
+    left: responsiveSize(40),
+  },
+  tree: {
+    width: responsiveSize(120),
+    height: responsiveSize(120),
+    position: 'absolute',
+    bottom: responsiveSize(80),
+    right: responsiveSize(30),
+  },
+  cloudImage: {
+    width: responsiveSize(110),
+    height: responsiveSize(70),
+    alignSelf: 'center',
+    position: 'absolute',
+    top: responsiveSize(210),
+  },
+})

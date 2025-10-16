@@ -37,7 +37,7 @@ export function CategoryList({ selected, onSelect }) {
 
           return (
             <TouchableOpacity
-              key={cat.name}
+              key={cat.id}
               onPress={() => handleClick(cat)}
               style={[
                 styles.categoryItem,
@@ -46,6 +46,11 @@ export function CategoryList({ selected, onSelect }) {
               activeOpacity={0.7}
             >
               <View style={styles.categoryContent}>
+                <Feather
+                  name={iconName}
+                  size={18}
+                  color={cat.color || 'black'}
+                />
                 <Text
                   style={[
                     styles.categoryText,
@@ -54,11 +59,6 @@ export function CategoryList({ selected, onSelect }) {
                 >
                   {cat.name}
                 </Text>
-                <Feather
-                  name={iconName}
-                  size={18}
-                  color={cat.color || 'black'}
-                />
               </View>
             </TouchableOpacity>
           )

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   View,
   Text,
@@ -15,41 +15,52 @@ import { useUIContext } from '../../context/UIContext'
 import { Entypo } from '@expo/vector-icons'
 import { Shadow } from 'react-native-shadow-2'
 import { CustomModal } from './CustomModal'
+import { CustomButton } from './CustomButton'
 import { CategoryList } from './CategoryList'
 
 const { width, height } = Dimensions.get('window')
-
-// 🔹 Escalado responsivo basado en ancho de pantalla
 const guidelineBaseWidth = 375
 const responsiveSize = (size) => (width / guidelineBaseWidth) * size
 
 export function AddTask() {
   const { addTask, taskInput, setTaskInput } = useTaskContext()
   const { modals, toggleModal, switchModal } = useUIContext()
-  const [selectedCategory, setSelectedCategory] = useState(null)
-  const { category } = useCategoryContext()
+  const { category, categories, maxCategories } = useCategoryContext()
 
-  const maxLength = 130
+  const [selectedCategory, setSelectedCategory] = useState(null)
+  const [canAddCategory, setCanAddCategory] = useState(true)
+  const maxLength = 100
+
+  // ⚡ Reinicia valores cada vez que se abre el modal
+  useEffect(() => {
+    if (modals?.addTask?.isOpen) {
+      setTaskInput('')
+
+      const defaultCategory =
+        categories?.find((cat) => cat.name === 'Todas') || category
+      setSelectedCategory(defaultCategory)
+
+      setCanAddCategory(categories.length < maxCategories)
+    }
+  }, [modals?.addTask?.isOpen, categories])
 
   const handleAddTask = () => {
     if (taskInput.trim() === '') return
+    addTask(taskInput, selectedCategory)
+    handleClose()
+  }
 
-    if (!category) {
-      console.warn('Debes seleccionar una categoría antes de agregar la tarea.')
-      return
-    }
-
-    addTask(selectedCategory || category)
+  const handleClose = () => {
     toggleModal('addTask')
+    setTaskInput('')
+    setSelectedCategory(null)
   }
 
   return (
     <CustomModal
       modalName="addTask"
       isOpen={modals?.addTask?.isOpen || false}
-      onClose={() => {
-        toggleModal('addTask')
-      }}
+      onClose={handleClose}
       title="Agregar Tarea"
     >
       <View style={styles.modalView}>
@@ -57,13 +68,14 @@ export function AddTask() {
           {taskInput.length}/{maxLength} caracteres
         </Text>
 
+        {/* Input de tarea */}
         <Shadow
-          distance={3}
-          startColor="rgba(0,0,0,.9)"
+          distance={10}
+          startColor="rgba(0,0,0,1)"
           finalColor="rgba(0,0,0,0)"
-          offset={[0, 5]}
+          offset={[-10, 8]}
           radius={10}
-          containerViewStyle={{ marginBottom: responsiveSize(20) }}
+          style={{ marginBottom: responsiveSize(8) }}
         >
           <ImageBackground
             source={require('../../assets/notebook.jpg')}
@@ -84,20 +96,32 @@ export function AddTask() {
           </ImageBackground>
         </Shadow>
 
-        <TouchableOpacity
-          style={styles.addCategoryButton}
-          onPress={() => switchModal('addTask', 'category')}
-        >
-          <Text style={styles.addCategory}>Nueva Categoria</Text>
-        </TouchableOpacity>
+        {/* Botón Crear Categoría */}
+        {canAddCategory && (
+          <TouchableOpacity
+            style={styles.touchWrapper}
+            onPress={() => switchModal('addTask', 'category')}
+            activeOpacity={0.85}
+          >
+            <Shadow
+              distance={5}
+              startColor="#000"
+              offset={[0, 2]}
+              style={styles.addCategoryButton}
+            >
+              <View style={styles.fullButtonArea}>
+                <Text style={styles.addCategory}>Crear Categoría</Text>
+              </View>
+            </Shadow>
+          </TouchableOpacity>
+        )}
 
+        {/* Lista de categorías */}
         <Shadow
-          distance={3}
-          startColor="rgba(0,0,0,.9)"
-          finalColor="rgba(0,0,0,0)"
-          offset={[0, 1]}
+          distance={7}
+          startColor="rgba(0,0,0,1)"
+          offset={[-5, 8]}
           radius={10}
-          containerViewStyle={{ marginBottom: 0 }}
         >
           <View style={styles.shadowContainer}>
             <CategoryList
@@ -107,12 +131,21 @@ export function AddTask() {
           </View>
         </Shadow>
 
-        <TouchableOpacity style={styles.addButton} onPress={handleAddTask}>
-          <Entypo name="plus" size={responsiveSize(23)} color="white" />
-        </TouchableOpacity>
+        <CustomButton
+          icon={<Entypo name="plus" size={responsiveSize(30)} color="white" />}
+          onPress={handleAddTask}
+        />
       </View>
 
       {/* Imágenes decorativas */}
+      <Image
+        source={require('../../assets/cloud.png')}
+        style={[styles.cloudImage, { left: responsiveSize(-10) }]}
+      />
+      <Image
+        source={require('../../assets/cloud.png')}
+        style={[styles.cloudImage, { right: responsiveSize(-10) }]}
+      />
       <Image
         source={require('../../assets/tree.png')}
         style={styles.treeImage}
@@ -133,10 +166,10 @@ const styles = StyleSheet.create({
     borderRadius: responsiveSize(12),
     alignItems: 'center',
     zIndex: 1000,
+    gap: responsiveSize(20),
   },
   charCount: {
     color: '#646464',
-    marginBottom: responsiveSize(5),
     fontSize: responsiveSize(17),
     fontFamily: 'Geo_400Regular',
   },
@@ -157,23 +190,19 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     color: '#000',
   },
-  addButton: {
-    width: '30%',
-    alignSelf: 'center',
-    backgroundColor: 'black',
-    paddingVertical: responsiveSize(14),
-    borderRadius: responsiveSize(40),
+  touchWrapper: {
+    width: '100%',
     alignItems: 'center',
-    marginTop: responsiveSize(30),
+  },
+  fullButtonArea: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
   },
   addCategoryButton: {
-    width: '55%',
-    marginTop: responsiveSize(25),
-    alignSelf: 'center',
-    marginBottom: responsiveSize(20),
-    backgroundColor: 'black',
     paddingVertical: responsiveSize(14),
-    borderRadius: responsiveSize(10),
+    borderRadius: responsiveSize(20),
+    width: width * 0.45,
   },
   addCategory: {
     color: 'white',
@@ -181,27 +210,40 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'Geo_400Regular',
   },
+  addButton: {
+    paddingVertical: responsiveSize(9),
+    borderRadius: responsiveSize(20),
+    width: width * 0.25,
+  },
   shadowContainer: {
     height: responsiveSize(60),
+    marginBottom: responsiveSize(30),
     backgroundColor: 'white',
     borderWidth: responsiveSize(2),
     borderRadius: responsiveSize(10),
     borderColor: '#111',
   },
+  cloudImage: {
+    width: responsiveSize(110),
+    height: responsiveSize(70),
+    alignSelf: 'center',
+    position: 'absolute',
+    bottom: responsiveSize(210),
+  },
   treeImage: {
-    width: responsiveSize(90),
-    height: responsiveSize(90),
+    width: responsiveSize(120),
+    height: responsiveSize(120),
     alignSelf: 'center',
     position: 'absolute',
     bottom: responsiveSize(90),
-    right: responsiveSize(20),
+    right: responsiveSize(-10),
   },
   catImage: {
-    width: responsiveSize(80),
-    height: responsiveSize(80),
+    width: responsiveSize(70),
+    height: responsiveSize(70),
     alignSelf: 'center',
     position: 'absolute',
-    bottom: responsiveSize(90),
-    left: responsiveSize(50),
+    bottom: responsiveSize(110),
+    left: responsiveSize(30),
   },
 })

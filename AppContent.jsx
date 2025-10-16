@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: 5,
     gap: 38,
   },
   text: {
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   splashText: {
-    fontSize: 80,
+    fontSize: 120,
     fontFamily: 'Geo_400Regular_Italic',
     color: '#000',
   },
