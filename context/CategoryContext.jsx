@@ -19,7 +19,7 @@ const CategoryContext = createContext()
 export const CategoryProvider = ({ children }) => {
   const [categories, setCategories] = useState(defaultCategories)
   const [category, setCategory] = useState(defaultCategories[0])
-  const [maxCategories, setMaxCategories] = useState(15)
+  const [maxCategories, setMaxCategories] = useState(30)
 
   // ✅ Cargar categorías desde AsyncStorage
   useEffect(() => {
