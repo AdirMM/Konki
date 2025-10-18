@@ -142,7 +142,7 @@ export function BgDrawings() {
         resizeMode="contain"
       />
       <Animated.Image
-        source={require('../assets/island.png')}
+        source={require('../assets/island1.png')}
         style={[
           styles.island,
           {
