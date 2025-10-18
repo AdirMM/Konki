@@ -10,15 +10,16 @@ import {
   Keyboard,
   BackHandler,
   Platform,
-} from 'react-native'
-import { useEffect, useRef } from 'react'
-import { AntDesign } from '@expo/vector-icons'
+} from "react-native";
+import { useEffect, useRef } from "react";
+import { AntDesign } from "@expo/vector-icons";
+import { responsiveSize } from "../../utils/responsive";
 
-const screenHeight = Dimensions.get('window').height
+const screenHeight = Dimensions.get("window").height;
 
 export function CustomModal({ modalName, isOpen, onClose, title, children }) {
-  const opacity = useRef(new Animated.Value(0)).current
-  const translateY = useRef(new Animated.Value(screenHeight)).current
+  const opacity = useRef(new Animated.Value(0)).current;
+  const translateY = useRef(new Animated.Value(screenHeight)).current;
 
   useEffect(() => {
     if (isOpen) {
@@ -32,9 +33,9 @@ export function CustomModal({ modalName, isOpen, onClose, title, children }) {
           toValue: 0,
           useNativeDriver: false,
         }),
-      ]).start()
+      ]).start();
     } else {
-      Keyboard.dismiss()
+      Keyboard.dismiss();
       Animated.parallel([
         Animated.timing(opacity, {
           toValue: 0,
@@ -46,33 +47,33 @@ export function CustomModal({ modalName, isOpen, onClose, title, children }) {
           duration: 200,
           useNativeDriver: false,
         }),
-      ]).start()
+      ]).start();
     }
-  }, [isOpen])
+  }, [isOpen]);
 
-  // 🔹 Manejo del botón físico de "atrás" en Android
+  // 🔹 Manejo del botón físico "atrás" en Android
   useEffect(() => {
-    if (Platform.OS === 'android' && isOpen) {
+    if (Platform.OS === "android" && isOpen) {
       const subscription = BackHandler.addEventListener(
-        'hardwareBackPress',
+        "hardwareBackPress",
         () => {
-          onClose()
-          return true // evita que el sistema cierre la app
+          onClose();
+          return true; // evita que el sistema cierre la app
         }
-      )
-      return () => subscription.remove() // ✅ forma correcta de removerlo
+      );
+      return () => subscription.remove();
     }
-  }, [isOpen])
+  }, [isOpen]);
 
   const handleBackdropPress = () => {
-    Keyboard.dismiss()
-    onClose()
-  }
+    Keyboard.dismiss();
+    onClose();
+  };
 
   return (
     <Animated.View
       style={[styles.backdrop, { opacity }]}
-      pointerEvents={isOpen ? 'auto' : 'none'}
+      pointerEvents={isOpen ? "auto" : "none"}
     >
       <TouchableWithoutFeedback onPress={handleBackdropPress}>
         <View style={styles.backdropTouchableArea} />
@@ -88,18 +89,22 @@ export function CustomModal({ modalName, isOpen, onClose, title, children }) {
           ]}
         >
           <ImageBackground
-            source={require('../../assets/notebook.jpg')}
+            source={require("../../assets/notebook.jpg")}
             style={styles.imageBackground}
-            imageStyle={{ borderRadius: 16 }}
+            imageStyle={{ borderRadius: responsiveSize(16) }}
           >
             <TouchableOpacity
               style={styles.closeButton}
               onPress={() => {
-                Keyboard.dismiss()
-                onClose()
+                Keyboard.dismiss();
+                onClose();
               }}
             >
-              <AntDesign name="closesquare" size={30} color="black" />
+              <AntDesign
+                name="closesquare"
+                size={responsiveSize(30)}
+                color="black"
+              />
             </TouchableOpacity>
 
             {title && <Text style={styles.title}>{title}</Text>}
@@ -109,53 +114,53 @@ export function CustomModal({ modalName, isOpen, onClose, title, children }) {
         </Animated.View>
       </TouchableWithoutFeedback>
     </Animated.View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   backdrop: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
+    backgroundColor: "rgba(0,0,0,0.3)",
+    justifyContent: "flex-end",
+    alignItems: "center",
     zIndex: 1000,
   },
   backdropTouchableArea: {
     ...StyleSheet.absoluteFillObject,
   },
   modalContainer: {
-    width: '100%',
+    width: "100%",
     height: screenHeight * 0.9,
-    borderRadius: 16,
-    overflow: 'hidden',
+    borderRadius: responsiveSize(16),
+    overflow: "hidden",
     elevation: 5,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     zIndex: 10,
   },
   imageBackground: {
     flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+    justifyContent: "flex-start",
+    alignItems: "center",
   },
   closeButton: {
-    position: 'absolute',
-    top: 12,
-    right: 12,
+    position: "absolute",
+    top: responsiveSize(12),
+    right: responsiveSize(12),
     zIndex: 20,
   },
   title: {
-    marginTop: 50,
-    fontSize: 55,
-    textAlign: 'center',
-    fontFamily: 'Geo_400Regular_Italic',
+    marginTop: responsiveSize(50),
+    fontSize: responsiveSize(55),
+    textAlign: "center",
+    fontFamily: "Geo_400Regular_Italic",
   },
   content: {
     flex: 1,
-    width: '100%',
-    alignItems: 'center',
+    width: "100%",
+    alignItems: "center",
   },
-})
+});

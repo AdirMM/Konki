@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,54 +7,56 @@ import {
   TouchableOpacity,
   StyleSheet,
   ImageBackground,
-  Dimensions,
-} from 'react-native'
-import { useCategoryContext } from '../../context/CategoryContext'
-import { useTaskContext } from '../../context/TaskContext'
-import { useUIContext } from '../../context/UIContext'
-import { Entypo } from '@expo/vector-icons'
-import { Shadow } from 'react-native-shadow-2'
-import { CustomModal } from './CustomModal'
-import { CustomButton } from './CustomButton'
-import { CategoryList } from './CategoryList'
+} from "react-native";
+import { useCategoryContext } from "../../context/CategoryContext";
+import { useTaskContext } from "../../context/TaskContext";
+import { useUIContext } from "../../context/UIContext";
+import { Entypo } from "@expo/vector-icons";
+import { Shadow } from "react-native-shadow-2";
+import { CustomModal } from "./CustomModal";
+import { CustomButton } from "./CustomButton";
+import { CategoryList } from "./CategoryList";
 
-const { width, height } = Dimensions.get('window')
-const guidelineBaseWidth = 375
-const responsiveSize = (size) => (width / guidelineBaseWidth) * size
+// ✅ Importa helpers responsivos
+import {
+  responsiveSize,
+  responsiveWidth,
+  responsiveHeight,
+} from "../../utils/responsive";
 
 export function AddTask() {
-  const { addTask, taskInput, setTaskInput } = useTaskContext()
-  const { modals, toggleModal, switchModal } = useUIContext()
-  const { category, categories, maxCategories } = useCategoryContext()
+  const { addTask, taskInput, setTaskInput } = useTaskContext();
+  const { modals, toggleModal, switchModal } = useUIContext();
+  const { category, categories, maxCategories } = useCategoryContext();
 
-  const [selectedCategory, setSelectedCategory] = useState(null)
-  const [canAddCategory, setCanAddCategory] = useState(true)
-  const maxLength = 100
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [canAddCategory, setCanAddCategory] = useState(true);
+  const maxLength = 100;
 
   // ⚡ Reinicia valores cada vez que se abre el modal
   useEffect(() => {
     if (modals?.addTask?.isOpen) {
-      setTaskInput('')
+      setTaskInput("");
 
       const defaultCategory =
-        categories?.find((cat) => cat.name === 'Todas') || category
-      setSelectedCategory(defaultCategory)
+        categories?.find((cat) => cat.name === "Todas") || category;
+      setSelectedCategory(defaultCategory);
 
-      setCanAddCategory(categories.length < maxCategories)
+      setCanAddCategory(categories.length < maxCategories);
     }
-  }, [modals?.addTask?.isOpen, categories])
+  }, [modals?.addTask?.isOpen, categories]);
 
   const handleAddTask = () => {
-    if (taskInput.trim() === '') return
-    addTask(taskInput, selectedCategory)
-    handleClose()
-  }
+    if (taskInput.trim() === "") return;
+    addTask(taskInput, selectedCategory);
+    handleClose();
+  };
 
   const handleClose = () => {
-    toggleModal('addTask')
-    setTaskInput('')
-    setSelectedCategory(null)
-  }
+    toggleModal("addTask");
+    setTaskInput("");
+    setSelectedCategory(null);
+  };
 
   return (
     <CustomModal
@@ -78,7 +80,7 @@ export function AddTask() {
           style={{ marginBottom: responsiveSize(8) }}
         >
           <ImageBackground
-            source={require('../../assets/notebook.jpg')}
+            source={require("../../assets/notebook.jpg")}
             style={styles.inputBackground}
             imageStyle={{ borderRadius: responsiveSize(10) }}
           >
@@ -100,7 +102,7 @@ export function AddTask() {
         {canAddCategory && (
           <TouchableOpacity
             style={styles.touchWrapper}
-            onPress={() => switchModal('addTask', 'category')}
+            onPress={() => switchModal("addTask", "category")}
             activeOpacity={0.85}
           >
             <Shadow
@@ -139,111 +141,106 @@ export function AddTask() {
 
       {/* Imágenes decorativas */}
       <Image
-        source={require('../../assets/cloud.png')}
+        source={require("../../assets/cloud.png")}
         style={[styles.cloudImage, { left: responsiveSize(-10) }]}
       />
       <Image
-        source={require('../../assets/cloud.png')}
+        source={require("../../assets/cloud.png")}
         style={[styles.cloudImage, { right: responsiveSize(-10) }]}
       />
       <Image
-        source={require('../../assets/tree.png')}
+        source={require("../../assets/tree.png")}
         style={styles.treeImage}
         resizeMode="contain"
       />
       <Image
-        source={require('../../assets/gatito1.png')}
+        source={require("../../assets/gatito1.png")}
         style={styles.catImage}
         resizeMode="contain"
       />
     </CustomModal>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   modalView: {
-    width: '90%',
+    width: "90%",
     borderRadius: responsiveSize(12),
-    alignItems: 'center',
+    alignItems: "center",
     zIndex: 1000,
     gap: responsiveSize(20),
   },
   charCount: {
-    color: '#646464',
+    color: "#646464",
     fontSize: responsiveSize(17),
-    fontFamily: 'Geo_400Regular',
+    fontFamily: "Geo_400Regular",
   },
   inputBackground: {
-    width: width * 0.85,
-    minHeight: height * 0.22,
+    width: responsiveWidth(320), // reemplazo de width * 0.85
+    minHeight: responsiveHeight(180), // reemplazo de height * 0.22
     borderRadius: responsiveSize(10),
     borderWidth: responsiveSize(2.5),
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   textInput: {
     flex: 1,
     padding: responsiveSize(10),
-    fontFamily: 'Geo_400Regular',
+    fontFamily: "Geo_400Regular",
     fontSize: responsiveSize(29),
     letterSpacing: 1.2,
-    textAlignVertical: 'top',
-    backgroundColor: 'transparent',
-    color: '#000',
+    textAlignVertical: "top",
+    backgroundColor: "transparent",
+    color: "#000",
   },
   touchWrapper: {
-    width: '100%',
-    alignItems: 'center',
+    width: "100%",
+    alignItems: "center",
   },
   fullButtonArea: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
   },
   addCategoryButton: {
     paddingVertical: responsiveSize(14),
     borderRadius: responsiveSize(20),
-    width: width * 0.45,
+    width: responsiveWidth(170), // reemplazo de width * 0.45
   },
   addCategory: {
-    color: 'white',
+    color: "white",
     fontSize: responsiveSize(19),
-    textAlign: 'center',
-    fontFamily: 'Geo_400Regular',
-  },
-  addButton: {
-    paddingVertical: responsiveSize(9),
-    borderRadius: responsiveSize(20),
-    width: width * 0.25,
+    textAlign: "center",
+    fontFamily: "Geo_400Regular",
   },
   shadowContainer: {
     height: responsiveSize(60),
     marginBottom: responsiveSize(30),
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderWidth: responsiveSize(2),
     borderRadius: responsiveSize(10),
-    borderColor: '#111',
+    borderColor: "#111",
   },
   cloudImage: {
     width: responsiveSize(110),
     height: responsiveSize(70),
-    alignSelf: 'center',
-    position: 'absolute',
+    alignSelf: "center",
+    position: "absolute",
     bottom: responsiveSize(210),
   },
   treeImage: {
     width: responsiveSize(120),
     height: responsiveSize(120),
-    alignSelf: 'center',
-    position: 'absolute',
+    alignSelf: "center",
+    position: "absolute",
     bottom: responsiveSize(90),
     right: responsiveSize(-10),
   },
   catImage: {
     width: responsiveSize(70),
     height: responsiveSize(70),
-    alignSelf: 'center',
-    position: 'absolute',
+    alignSelf: "center",
+    position: "absolute",
     bottom: responsiveSize(110),
     left: responsiveSize(30),
   },
-})
+});

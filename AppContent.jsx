@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -7,27 +7,30 @@ import {
   Animated,
   Easing,
   Dimensions,
-} from 'react-native'
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { AddTask } from './components/ui/AddTask'
-import { CategoryModal } from './components/ui/CategoryModal'
-import { CategoriesModal } from './components/ui/CategoriesModal'
-import { TaskControls } from './components/TaskControls'
-import { Menu } from './components/ui/Menu'
-import { BgDrawings } from './components/BgDrawings'
-import { FilterCategory } from './components/ui/FilterCategory'
-import { EditTask } from './components/ui/EditTask'
-import { MessageModal } from './components/ui/MessageModal'
-import { TaskList } from './components/TaskList'
-
-const { width, height } = Dimensions.get('window')
-const guidelineBaseWidth = 375
-const responsiveSize = (size) => (width / guidelineBaseWidth) * size
+import { AddTask } from "./components/ui/AddTask";
+import { CategoryModal } from "./components/ui/CategoryModal";
+import { CategoriesModal } from "./components/ui/CategoriesModal";
+import { TaskControls } from "./components/TaskControls";
+import { Menu } from "./components/ui/Menu";
+import { BgDrawings } from "./components/BgDrawings";
+import { FilterCategory } from "./components/ui/FilterCategory";
+import { EditTask } from "./components/ui/EditTask";
+import { MessageModal } from "./components/ui/MessageModal";
+import { TaskList } from "./components/TaskList";
+import {
+  responsiveSize,
+  responsiveVertical,
+  responsiveFont,
+} from "./utils/responsive";
 
 export default function AppContent() {
-  const [showSplash, setShowSplash] = useState(true)
-  const splashOpacity = useRef(new Animated.Value(1)).current
-  const appOpacity = useRef(new Animated.Value(0)).current
+  const [showSplash, setShowSplash] = useState(true);
+  const splashOpacity = useRef(new Animated.Value(1)).current;
+  const appOpacity = useRef(new Animated.Value(0)).current;
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -45,24 +48,31 @@ export default function AppContent() {
           easing: Easing.out(Easing.ease),
           useNativeDriver: true,
         }),
-      ]).start(() => setShowSplash(false))
-    }, 1500)
+      ]).start(() => setShowSplash(false));
+    }, 1500);
 
-    return () => clearTimeout(timer)
-  }, [])
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <View style={{ flex: 1 }}>
       {/* App montada desde el inicio, invisible al principio */}
       <Animated.View style={{ flex: 1, opacity: appOpacity }}>
         <ImageBackground
-          source={require('./assets/notebook.jpg')}
+          source={require("./assets/notebook.jpg")}
           style={styles.background}
           resizeMode="cover"
         >
           <BgDrawings />
+
           <View
-            style={[styles.container, { paddingVertical: responsiveSize(45) }]}
+            style={[
+              styles.container,
+              {
+                paddingTop: insets.top + responsiveVertical(25),
+                paddingBottom: insets.bottom + responsiveVertical(45),
+              },
+            ]}
           >
             {/* Encabezado */}
             <View
@@ -70,7 +80,7 @@ export default function AppContent() {
                 styles.topRow,
                 {
                   gap: responsiveSize(38),
-                  marginBottom: responsiveSize(5),
+                  marginBottom: responsiveVertical(5),
                 },
               ]}
             >
@@ -80,7 +90,7 @@ export default function AppContent() {
                   styles.text,
                   {
                     fontSize: responsiveSize(80),
-                    paddingTop: responsiveSize(10),
+                    paddingTop: responsiveVertical(10),
                   },
                 ]}
               >
@@ -99,7 +109,7 @@ export default function AppContent() {
             <View
               style={[
                 styles.taskControlsWrapper,
-                { bottom: responsiveSize(60) },
+                { bottom: responsiveVertical(60) + insets.bottom },
               ]}
             >
               <TaskControls />
@@ -114,13 +124,13 @@ export default function AppContent() {
           style={[StyleSheet.absoluteFillObject, { opacity: splashOpacity }]}
         >
           <ImageBackground
-            source={require('./assets/notebook.jpg')}
+            source={require("./assets/notebook.jpg")}
             style={styles.fullscreenBackground}
             resizeMode="cover"
           >
             <View style={styles.splashContent}>
               <Animated.Image
-                source={require('./assets/konki-icon.png')}
+                source={require("./assets/konki-icon.png")}
                 style={{
                   width: responsiveSize(230),
                   height: responsiveSize(230),
@@ -141,26 +151,36 @@ export default function AppContent() {
         </Animated.View>
       )}
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   background: { flex: 1 },
-  fullscreenBackground: { flex: 1, width: '100%', height: '100%' },
+  fullscreenBackground: { flex: 1, width: "100%", height: "100%" },
   container: {
-    width: '100%',
+    width: "100%",
     flex: 1,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "transparent",
   },
-  topRow: { position: 'relative', flexDirection: 'row', alignItems: 'center' },
-  text: { fontFamily: 'Geo_400Regular_Italic' },
+  topRow: {
+    position: "relative",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  text: {
+    fontFamily: "Geo_400Regular_Italic",
+  },
   taskControlsWrapper: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     right: 0,
-    alignItems: 'center',
+    alignItems: "center",
   },
-  splashContent: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-})
+  splashContent: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});

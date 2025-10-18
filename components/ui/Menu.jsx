@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -7,33 +7,33 @@ import {
   Pressable,
   Animated,
   Dimensions,
-} from 'react-native'
-import { Feather } from '@expo/vector-icons'
-import { useUIContext } from '../../context/UIContext'
-import { Shadow } from 'react-native-shadow-2'
+} from "react-native";
+import { Feather } from "@expo/vector-icons";
+import { useUIContext } from "../../context/UIContext";
+import { Shadow } from "react-native-shadow-2";
 
-const { width, height } = Dimensions.get('window')
+const { width, height } = Dimensions.get("window");
 
 export function Menu() {
-  const [actionMenu, setActionMenu] = useState(false)
-  const rotateAnim = useRef(new Animated.Value(0)).current
-  const slideY = useRef(new Animated.Value(-40)).current
-  const slideX = useRef(new Animated.Value(-40)).current
-  const opacityAnim = useRef(new Animated.Value(0)).current
+  const [actionMenu, setActionMenu] = useState(false);
+  const rotateAnim = useRef(new Animated.Value(0)).current;
+  const slideY = useRef(new Animated.Value(-40)).current;
+  const slideX = useRef(new Animated.Value(-40)).current;
+  const opacityAnim = useRef(new Animated.Value(0)).current;
 
-  const { toggleModal } = useUIContext()
+  const { toggleModal } = useUIContext();
 
   const handleToggleMenu = () => {
-    const isOpening = !actionMenu
+    const isOpening = !actionMenu;
 
     Animated.timing(rotateAnim, {
       toValue: isOpening ? 1 : 0,
       duration: 250,
       useNativeDriver: true,
-    }).start()
+    }).start();
 
     if (isOpening) {
-      setActionMenu(true)
+      setActionMenu(true);
       Animated.parallel([
         Animated.timing(slideY, {
           toValue: 0,
@@ -50,7 +50,7 @@ export function Menu() {
           duration: 300,
           useNativeDriver: false,
         }),
-      ]).start()
+      ]).start();
     } else {
       Animated.parallel([
         Animated.timing(slideY, {
@@ -68,17 +68,17 @@ export function Menu() {
           duration: 300,
           useNativeDriver: false,
         }),
-      ]).start(() => setActionMenu(false))
+      ]).start(() => setActionMenu(false));
     }
-  }
+  };
 
   const rotateInterpolation = rotateAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0deg', '90deg'],
-  })
+    outputRange: ["0deg", "90deg"],
+  });
 
   return (
-    <View style={{ position: 'relative', zIndex: 100 }}>
+    <View style={{ position: "relative", zIndex: 100 }}>
       {/* Botón de menú */}
       <Shadow distance={5} startColor="#000" offset={[0, 1]}>
         <Pressable onPress={handleToggleMenu}>
@@ -99,12 +99,12 @@ export function Menu() {
           {/* Fondo para cerrar el menú al tocar fuera */}
           <Pressable
             style={{
-              position: 'absolute',
+              position: "absolute",
               top: 0,
               left: 0,
               width,
               height,
-              backgroundColor: 'transparent',
+              backgroundColor: "transparent",
               zIndex: 49,
             }}
             onPress={handleToggleMenu}
@@ -124,23 +124,11 @@ export function Menu() {
               <TouchableOpacity
                 style={styles.menuButton}
                 onPress={() => {
-                  toggleModal('categories')
-                  handleToggleMenu()
+                  toggleModal("categories");
+                  handleToggleMenu();
                 }}
               >
                 <Text style={styles.buttonText}>Ver Categorías</Text>
-              </TouchableOpacity>
-            </Shadow>
-
-            <Shadow distance={5} startColor="#000" offset={[0, 3]}>
-              <TouchableOpacity
-                style={styles.menuButton}
-                onPress={() => {
-                  toggleModal('fonts')
-                  handleToggleMenu()
-                }}
-              >
-                <Text style={styles.buttonText}>Cambiar Fuente</Text>
               </TouchableOpacity>
             </Shadow>
 
@@ -148,8 +136,8 @@ export function Menu() {
               <TouchableOpacity
                 style={[styles.menuButton, styles.deleteButton]}
                 onPress={() => {
-                  toggleModal('message')
-                  handleToggleMenu()
+                  toggleModal("message");
+                  handleToggleMenu();
                 }}
               >
                 <Text style={styles.buttonText}>Eliminar completadas</Text>
@@ -159,33 +147,33 @@ export function Menu() {
         </>
       )}
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   menu: {
     width: width * 0.6, // 60% del ancho total
-    position: 'absolute',
+    position: "absolute",
     top: height * 0.09, // 9% desde arriba
     zIndex: 100,
-    flexDirection: 'column',
-    alignItems: 'flex-start',
+    flexDirection: "column",
+    alignItems: "flex-start",
   },
   menuButton: {
     height: height * 0.075, // 7.5% de la altura
-    justifyContent: 'center',
+    justifyContent: "center",
     borderWidth: 2,
     borderRadius: 10,
     marginBottom: height * 0.015,
     paddingHorizontal: width * 0.04,
   },
   deleteButton: {
-    borderColor: '#ab0000',
+    borderColor: "#ab0000",
   },
   buttonText: {
     fontSize: width * 0.055, // escala con el ancho de pantalla
-    color: '#fff',
-    textAlign: 'center',
-    fontFamily: 'Geo_400Regular_Italic',
+    color: "#fff",
+    textAlign: "center",
+    fontFamily: "Geo_400Regular_Italic",
   },
-})
+});

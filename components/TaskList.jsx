@@ -1,30 +1,30 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { View, ScrollView, StyleSheet } from 'react-native'
-import { useTaskContext } from '../context/TaskContext'
-import { useUIContext } from '../context/UIContext'
-import { useCategoryContext } from '../context/CategoryContext'
-import { TaskGroup } from './TaskGroup'
-import { EmptyState } from './EmptyState'
+import React, { useState, useRef, useEffect } from "react";
+import { View, ScrollView, StyleSheet } from "react-native";
+import { useTaskContext } from "../context/TaskContext";
+import { useUIContext } from "../context/UIContext";
+import { useCategoryContext } from "../context/CategoryContext";
+import { TaskGroup } from "./TaskGroup";
+import { EmptyState } from "./EmptyState";
 
 export function TaskList() {
-  const { tasks, toggleCompleted, setSelectedTask } = useTaskContext()
-  const { showCompleted, toggleModal } = useUIContext()
-  const { category } = useCategoryContext()
+  const { tasks, toggleCompleted, setSelectedTask } = useTaskContext();
+  const { showCompleted, toggleModal } = useUIContext();
+  const { category } = useCategoryContext();
 
-  const [recentlyCompleted, setRecentlyCompleted] = useState(null)
-  const [hasMounted, setHasMounted] = useState(false)
+  const [recentlyCompleted, setRecentlyCompleted] = useState(null);
+  const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      setHasMounted(true)
-    }, 500)
-    return () => clearTimeout(timeout)
-  }, [])
+      setHasMounted(true);
+    }, 500);
+    return () => clearTimeout(timeout);
+  }, []);
 
-  const clickTimeoutRef = useRef(null)
-  const recentlyCompletedTimeout = useRef(null)
+  const clickTimeoutRef = useRef(null);
+  const recentlyCompletedTimeout = useRef(null);
 
-  const isAllCategory = category.name.toLowerCase().trim() === 'todas'
+  const isAllCategory = category.name.toLowerCase().trim() === "todas";
 
   const filteredTasksByCategory = isAllCategory
     ? tasks
@@ -32,51 +32,51 @@ export function TaskList() {
         (task) =>
           task.category?.name?.toLowerCase().trim() ===
           category.name.toLowerCase().trim()
-      )
+      );
 
   const filteredTasks = showCompleted
     ? filteredTasksByCategory
-    : filteredTasksByCategory.filter((task) => !task.completed)
+    : filteredTasksByCategory.filter((task) => !task.completed);
 
   const handleToggleCompleted = (task) => {
-    const isAlreadyCompleted = task.completed
-    toggleCompleted(task.id)
+    const isAlreadyCompleted = task.completed;
+    toggleCompleted(task.id);
 
     if (recentlyCompleted?.id === task.id && isAlreadyCompleted) {
-      clearTimeout(recentlyCompletedTimeout.current)
-      setRecentlyCompleted(null)
-      return
+      clearTimeout(recentlyCompletedTimeout.current);
+      setRecentlyCompleted(null);
+      return;
     }
 
     if (!isAlreadyCompleted) {
       setRecentlyCompleted({
         id: task.id,
         text: task.text.slice(0, 25),
-      })
+      });
 
       recentlyCompletedTimeout.current = setTimeout(() => {
-        setRecentlyCompleted(null)
-      }, 2000)
+        setRecentlyCompleted(null);
+      }, 2000);
     }
-  }
+  };
 
   const getRelativeDate = (dateString) => {
-    const date = new Date(dateString)
-    const now = new Date()
-    const diffInTime = now - date
-    const diffInDays = Math.floor(diffInTime / (1000 * 3600 * 24))
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInTime = now - date;
+    const diffInDays = Math.floor(diffInTime / (1000 * 3600 * 24));
 
-    if (diffInDays === 0) return 'Hoy'
-    if (diffInDays === 1) return 'Ayer'
-    return `Hace ${diffInDays} días`
-  }
+    if (diffInDays === 0) return "Hoy";
+    if (diffInDays === 1) return "Ayer";
+    return `Hace ${diffInDays} días`;
+  };
 
   const groupedTasks = filteredTasks.reduce((acc, task) => {
-    const relativeDate = getRelativeDate(task.createAt)
-    if (!acc[relativeDate]) acc[relativeDate] = []
-    acc[relativeDate].push(task)
-    return acc
-  }, {})
+    const relativeDate = getRelativeDate(task.createAt);
+    if (!acc[relativeDate]) acc[relativeDate] = [];
+    acc[relativeDate].push(task);
+    return acc;
+  }, {});
 
   return (
     <View style={styles.container}>
@@ -105,7 +105,7 @@ export function TaskList() {
         </ScrollView>
       )}
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -116,4 +116,4 @@ const styles = StyleSheet.create({
   taskList: {
     paddingBottom: 180,
   },
-})
+});
