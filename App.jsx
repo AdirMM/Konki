@@ -1,3 +1,4 @@
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 import AppContent from './AppContent'
 import { CategoryProvider } from './context/CategoryContext'
 import { TaskProvider } from './context/TaskContext'
@@ -7,7 +8,7 @@ import {
   Geo_400Regular,
   Geo_400Regular_Italic,
 } from '@expo-google-fonts/geo'
-import { View, StatusBar } from 'react-native'
+import { View, StatusBar, Text } from 'react-native'
 
 export default function App() {
   // Cargar las fuentes necesarias
@@ -21,7 +22,7 @@ export default function App() {
     return (
       <View
         style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-      ></View>
+      />
     )
   }
 
@@ -37,8 +38,7 @@ export default function App() {
 
   // Renderizar la aplicación solo cuando las fuentes estén listas
   return (
-    <>
-      {/* StatusBar configurado al inicio */}
+    <SafeAreaProvider>
       <StatusBar
         barStyle="dark-content"
         backgroundColor="#fff"
@@ -52,6 +52,6 @@ export default function App() {
           </UIProvider>
         </TaskProvider>
       </CategoryProvider>
-    </>
+    </SafeAreaProvider>
   )
 }

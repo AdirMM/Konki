@@ -6,6 +6,7 @@ import {
   ImageBackground,
   Animated,
   Easing,
+  Dimensions,
 } from 'react-native'
 
 import { AddTask } from './components/ui/AddTask'
@@ -19,6 +20,10 @@ import { EditTask } from './components/ui/EditTask'
 import { MessageModal } from './components/ui/MessageModal'
 import { TaskList } from './components/TaskList'
 
+const { width, height } = Dimensions.get('window')
+const guidelineBaseWidth = 375
+const responsiveSize = (size) => (width / guidelineBaseWidth) * size
+
 export default function AppContent() {
   const [showSplash, setShowSplash] = useState(true)
   const splashOpacity = useRef(new Animated.Value(1)).current
@@ -26,7 +31,6 @@ export default function AppContent() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      // fade out splash y fade in app simultáneamente
       Animated.parallel([
         Animated.timing(splashOpacity, {
           toValue: 0,
@@ -37,13 +41,11 @@ export default function AppContent() {
         Animated.timing(appOpacity, {
           toValue: 1,
           duration: 800,
-          delay: 200, // leve retraso para que el fade sea más natural
+          delay: 200,
           easing: Easing.out(Easing.ease),
           useNativeDriver: true,
         }),
-      ]).start(() => {
-        setShowSplash(false)
-      })
+      ]).start(() => setShowSplash(false))
     }, 1500)
 
     return () => clearTimeout(timer)
@@ -51,7 +53,7 @@ export default function AppContent() {
 
   return (
     <View style={{ flex: 1 }}>
-      {/* --- App montada desde el inicio, invisible al principio --- */}
+      {/* App montada desde el inicio, invisible al principio */}
       <Animated.View style={{ flex: 1, opacity: appOpacity }}>
         <ImageBackground
           source={require('./assets/notebook.jpg')}
@@ -59,10 +61,31 @@ export default function AppContent() {
           resizeMode="cover"
         >
           <BgDrawings />
-          <View style={styles.container}>
-            <View style={styles.topRow}>
+          <View
+            style={[styles.container, { paddingVertical: responsiveSize(45) }]}
+          >
+            {/* Encabezado */}
+            <View
+              style={[
+                styles.topRow,
+                {
+                  gap: responsiveSize(38),
+                  marginBottom: responsiveSize(5),
+                },
+              ]}
+            >
               <Menu />
-              <Text style={styles.text}>Konki</Text>
+              <Text
+                style={[
+                  styles.text,
+                  {
+                    fontSize: responsiveSize(80),
+                    paddingTop: responsiveSize(10),
+                  },
+                ]}
+              >
+                Konki
+              </Text>
               <FilterCategory />
             </View>
 
@@ -73,14 +96,19 @@ export default function AppContent() {
             <CategoriesModal />
             <TaskList />
 
-            <View style={styles.taskControlsWrapper}>
+            <View
+              style={[
+                styles.taskControlsWrapper,
+                { bottom: responsiveSize(60) },
+              ]}
+            >
               <TaskControls />
             </View>
           </View>
         </ImageBackground>
       </Animated.View>
 
-      {/* --- Splash encima (se desvanece) --- */}
+      {/* Splash encima */}
       {showSplash && (
         <Animated.View
           style={[StyleSheet.absoluteFillObject, { opacity: splashOpacity }]}
@@ -91,7 +119,23 @@ export default function AppContent() {
             resizeMode="cover"
           >
             <View style={styles.splashContent}>
-              <Text style={styles.splashText}>Konki</Text>
+              <Animated.Image
+                source={require('./assets/konki-icon.png')}
+                style={{
+                  width: responsiveSize(230),
+                  height: responsiveSize(230),
+                  opacity: splashOpacity,
+                  transform: [
+                    {
+                      scale: splashOpacity.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0.8, 1],
+                      }),
+                    },
+                  ],
+                }}
+                resizeMode="contain"
+              />
             </View>
           </ImageBackground>
         </Animated.View>
@@ -101,49 +145,22 @@ export default function AppContent() {
 }
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-  },
-  fullscreenBackground: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
+  background: { flex: 1 },
+  fullscreenBackground: { flex: 1, width: '100%', height: '100%' },
   container: {
     width: '100%',
     flex: 1,
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 45,
     backgroundColor: 'transparent',
   },
-  topRow: {
-    position: 'relative',
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 5,
-    gap: 38,
-  },
-  text: {
-    paddingTop: 10,
-    fontSize: 80,
-    fontFamily: 'Geo_400Regular_Italic',
-  },
+  topRow: { position: 'relative', flexDirection: 'row', alignItems: 'center' },
+  text: { fontFamily: 'Geo_400Regular_Italic' },
   taskControlsWrapper: {
     position: 'absolute',
-    bottom: 60,
     left: 0,
     right: 0,
     alignItems: 'center',
   },
-  splashContent: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  splashText: {
-    fontSize: 120,
-    fontFamily: 'Geo_400Regular_Italic',
-    color: '#000',
-  },
+  splashContent: { flex: 1, justifyContent: 'center', alignItems: 'center' },
 })

@@ -5,7 +5,6 @@ const UIContext = createContext(null)
 export function UIProvider({ children }) {
   const [showCompleted, setShowCompleted] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState(null)
-
   const [isTop, setIsTop] = useState(true) // Puedes actualizarlo desde un ScrollView si lo necesitas
 
   const { tasks } = useTaskContext()

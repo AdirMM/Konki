@@ -132,6 +132,18 @@ export function Menu() {
               </TouchableOpacity>
             </Shadow>
 
+            <Shadow distance={5} startColor="#000" offset={[0, 3]}>
+              <TouchableOpacity
+                style={styles.menuButton}
+                onPress={() => {
+                  toggleModal('fonts')
+                  handleToggleMenu()
+                }}
+              >
+                <Text style={styles.buttonText}>Cambiar Fuente</Text>
+              </TouchableOpacity>
+            </Shadow>
+
             <Shadow distance={5} startColor="#ab0000" offset={[0, 3]}>
               <TouchableOpacity
                 style={[styles.menuButton, styles.deleteButton]}

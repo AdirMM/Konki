@@ -1,14 +1,25 @@
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native'
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  Dimensions,
+} from 'react-native'
 import { useTaskContext } from '../../context/TaskContext'
 import { useUIContext } from '../../context/UIContext'
 import { CustomModal } from './CustomModal'
 import { Shadow } from 'react-native-shadow-2'
 
+// 📱 Sistema responsivo igual que en AddTask
+const { width, height } = Dimensions.get('window')
+const guidelineBaseWidth = 375
+const responsiveSize = (size) => (width / guidelineBaseWidth) * size
+
 export function MessageModal({ messageText, showConfirm = true, onConfirm }) {
   const { modals, toggleModal } = useUIContext()
   const { hasCompletedTasks, deleteCompletedTask } = useTaskContext()
 
-  // Texto y comportamiento por defecto si no se pasan props
   const defaultText = hasCompletedTasks
     ? '¿Estás seguro de eliminar todas las tareas completadas?'
     : 'No existen tareas completadas'
@@ -62,28 +73,32 @@ export function MessageModal({ messageText, showConfirm = true, onConfirm }) {
         {/* Imágenes decorativas centradas */}
         <View style={styles.imagesContainer}>
           <Image
-            source={require('../../assets/flower.png')}
-            style={styles.flower}
-            resizeMode="contain"
+            source={require('../../assets/cloud.png')}
+            style={[
+              styles.cloud,
+              { left: responsiveSize(10), top: responsiveSize(5) },
+            ]}
           />
           <Image
-            source={require('../../assets/gatito6.png')}
-            style={styles.gatito6}
-            resizeMode="contain"
-          />
-          <Image
-            source={require('../../assets/gatito2.png')}
-            style={styles.gatito2}
-            resizeMode="contain"
-          />
-          <Image
-            source={require('../../assets/gym.png')}
-            style={styles.gym}
-            resizeMode="contain"
+            source={require('../../assets/cloud.png')}
+            style={[
+              styles.cloud,
+              { right: responsiveSize(10), top: responsiveSize(35) },
+            ]}
           />
           <Image
             source={require('../../assets/tree.png')}
             style={styles.tree}
+            resizeMode="contain"
+          />
+          <Image
+            source={require('../../assets/stickman.png')}
+            style={styles.stickman}
+            resizeMode="contain"
+          />
+          <Image
+            source={require('../../assets/car.png')}
+            style={styles.car}
             resizeMode="contain"
           />
         </View>
@@ -101,26 +116,26 @@ const styles = StyleSheet.create({
   },
   message: {
     width: '90%',
-    fontSize: 24,
+    fontSize: responsiveSize(24),
     textAlign: 'center',
-    marginBottom: 30,
+    marginBottom: responsiveSize(30),
     fontFamily: 'Geo_400Regular',
   },
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 20,
-    marginBottom: 20,
+    gap: responsiveSize(20),
+    marginBottom: responsiveSize(20),
   },
   button: {
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    borderRadius: 40,
+    paddingVertical: responsiveSize(14),
+    paddingHorizontal: responsiveSize(20),
+    borderRadius: responsiveSize(40),
     alignItems: 'center',
-    minWidth: 130,
+    minWidth: responsiveSize(130),
   },
   backText: {
-    fontSize: 22,
+    fontSize: responsiveSize(22),
     color: '#fff',
     fontFamily: 'Geo_400Regular',
   },
@@ -130,48 +145,39 @@ const styles = StyleSheet.create({
   confirmText: {
     color: '#fff',
     fontFamily: 'Geo_400Regular',
-    fontSize: 22,
+    fontSize: responsiveSize(22),
   },
   imagesContainer: {
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
-    marginTop: 10,
+    marginTop: responsiveSize(10),
   },
-  flower: {
-    width: 130,
-    height: 130,
+  cloud: {
+    width: responsiveSize(170),
+    height: responsiveSize(100),
     position: 'absolute',
-    top: 100,
-    right: -40,
-  },
-  gatito6: {
-    width: 80,
-    height: 80,
-    position: 'absolute',
-    top: 50,
-    right: 60,
-  },
-  gatito2: {
-    width: 80,
-    height: 80,
-    position: 'absolute',
-    top: 50,
-    left: 60,
-  },
-  gym: {
-    width: 80,
-    height: 80,
-    position: 'absolute',
-    top: 180,
-    left: 40,
   },
   tree: {
-    width: 190,
-    height: 170,
+    width: responsiveSize(190),
+    height: responsiveSize(220),
     position: 'absolute',
-    top: 120,
-    right: 20,
+    top: responsiveSize(200),
+    left: 0,
+  },
+  stickman: {
+    width: responsiveSize(70),
+    height: responsiveSize(70),
+    position: 'absolute',
+    top: responsiveSize(338),
+    left: responsiveSize(100),
+  },
+  car: {
+    width: responsiveSize(180),
+    height: responsiveSize(220),
+    position: 'absolute',
+    top: responsiveSize(260),
+    right: responsiveSize(20),
   },
 })

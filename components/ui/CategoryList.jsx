@@ -97,10 +97,10 @@ const styles = StyleSheet.create({
   categoryContent: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 4,
   },
   categoryText: {
     fontSize: 20,
-    marginRight: 6,
     letterSpacing: 1,
     fontFamily: 'Geo_400Regular',
   },

@@ -7,12 +7,13 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Dimensions,
   FlatList,
+  Dimensions,
 } from 'react-native'
 import { Shadow } from 'react-native-shadow-2'
 import { useCategoryContext } from '../../context/CategoryContext'
 import { useTaskContext } from '../../context/TaskContext'
+import { responsiveSize } from '../../utils/responsive' // <-- asegúrate de tener este helper
 
 const { width, height } = Dimensions.get('window')
 
@@ -44,12 +45,12 @@ export function FilterCategory() {
 
   const slideY = animValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [-40, 0],
+    outputRange: [responsiveSize(-40), 0],
   })
 
   const slideX = animValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [40, 0],
+    outputRange: [responsiveSize(40), 0],
   })
 
   const opacity = animValue.interpolate({
@@ -58,7 +59,7 @@ export function FilterCategory() {
   })
 
   const handleSelectCategory = (cat) => {
-    if (tasks.length === 0 && cat.name !== 'Todas') return // Solo "Todas" clickeable
+    if (tasks.length === 0 && cat.name !== 'Todas') return
     setCategory(cat)
     handleToggle()
   }
@@ -66,17 +67,22 @@ export function FilterCategory() {
   const renderItem = ({ item }) => {
     const isDisabled = tasks.length === 0 && item.name !== 'Todas'
     return (
-      <Shadow distance={6} startColor="#000" offset={[0, 3]}>
+      <Shadow
+        distance={responsiveSize(6)}
+        startColor="#000"
+        offset={[0, responsiveSize(3)]}
+      >
         <TouchableOpacity
-          style={[
-            styles.menuButton,
-            { opacity: isDisabled ? 0.5 : 1 }, // Atenúa si está deshabilitada
-          ]}
+          style={[styles.menuButton, { opacity: isDisabled ? 0.5 : 1 }]}
           onPress={() => handleSelectCategory(item)}
           disabled={isDisabled}
         >
           <View style={styles.buttonContent}>
-            <Feather name={item.iconName} size={20} color={item.color} />
+            <Feather
+              name={item.iconName}
+              size={responsiveSize(20)}
+              color={item.color}
+            />
             <Text style={styles.buttonText}>{item.name}</Text>
           </View>
         </TouchableOpacity>
@@ -87,10 +93,14 @@ export function FilterCategory() {
   return (
     <>
       <View style={styles.container}>
-        <Shadow distance={5} startColor="#000" offset={[0, 3]}>
+        <Shadow
+          distance={responsiveSize(5)}
+          startColor="#000"
+          offset={[0, responsiveSize(3)]}
+        >
           <Pressable onPress={handleToggle}>
             <Animated.View style={{ transform: [{ rotate }] }}>
-              <Ionicons name="filter" size={38} color="white" />
+              <Ionicons name="filter" size={responsiveSize(38)} color="white" />
             </Animated.View>
           </Pressable>
         </Shadow>
@@ -142,36 +152,39 @@ const styles = StyleSheet.create({
   dropdown: {
     position: 'absolute',
     top: height * 0.1,
-    right: -10,
+    right: responsiveSize(-10),
     zIndex: 1000,
     maxHeight: height * 0.5,
-    borderRadius: 12,
+    borderRadius: responsiveSize(12),
     overflow: 'hidden',
   },
-  scrollContainer: { width: width * 0.45, borderRadius: 12 },
+  scrollContainer: {
+    width: width * 0.45,
+    borderRadius: responsiveSize(12),
+  },
   scrollContent: {
     alignItems: 'center',
-    paddingVertical: height * 0.02,
+    paddingVertical: responsiveSize(20),
   },
   menuButton: {
     width: width * 0.4,
-    height: height * 0.075,
+    height: responsiveSize(60),
     justifyContent: 'center',
-    borderWidth: 2,
-    borderRadius: 12,
-    marginBottom: height * 0.02,
-    paddingHorizontal: width * 0.04,
+    borderWidth: responsiveSize(2),
+    borderRadius: responsiveSize(12),
+    marginBottom: responsiveSize(20),
+    paddingHorizontal: responsiveSize(18),
     backgroundColor: 'rgba(0, 0, 0, 0.9)',
   },
   buttonContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: responsiveSize(10),
     justifyContent: 'center',
   },
   buttonText: {
     color: '#fff',
-    fontSize: width * 0.05,
+    fontSize: responsiveSize(20),
     fontFamily: 'Geo_400Regular_Italic',
   },
 })

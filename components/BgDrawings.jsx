@@ -2,33 +2,40 @@ import React, { useEffect, useRef } from 'react'
 import { Animated, StyleSheet, Dimensions } from 'react-native'
 import { useTaskContext } from '../context/TaskContext'
 import { useUIContext } from '../context/UIContext'
+import { useCategoryContext } from '../context/CategoryContext' // <--- para la categoría filtrada
 
-const { width, height } = Dimensions.get('window')
+const { width } = Dimensions.get('window')
+const guidelineBaseWidth = 375
+const responsiveSize = (size) => (width / guidelineBaseWidth) * size
 
 export function BgDrawings() {
   const { tasks } = useTaskContext()
   const { showCompleted } = useUIContext()
+  const { category: selectedCategory } = useCategoryContext() // categoría seleccionada
 
-  const visibleTasks = showCompleted
-    ? tasks
-    : tasks.filter((task) => !task.completed)
-  const visibleCount = visibleTasks.length
+  // Filtrado de tareas según completadas y categoría
+  const filteredTasks = tasks.filter((task) => {
+    const matchesCategory =
+      selectedCategory?.name === 'Todas' ||
+      task.categoryId === selectedCategory?.id
+    const matchesCompleted = showCompleted || !task.completed
+    return matchesCategory && matchesCompleted
+  })
+
+  const hasTasks = tasks.length > 0
+  const visibleCount = filteredTasks.length
 
   const contentOpacity = useRef(new Animated.Value(0)).current
   const contentTranslate = useRef(new Animated.Value(20)).current
-
   const emptyOpacity = useRef(new Animated.Value(0)).current
   const emptyTranslate = useRef(new Animated.Value(20)).current
-
   const consejoOpacity = useRef(new Animated.Value(0)).current
   const consejoTranslate = useRef(new Animated.Value(20)).current
-
   const todeleteOpacity = useRef(new Animated.Value(0)).current
   const todeleteTranslate = useRef(new Animated.Value(20)).current
 
-  const hasTasks = tasks.length > 0
-
   useEffect(() => {
+    // Con tareas
     Animated.parallel([
       Animated.timing(contentOpacity, {
         toValue: hasTasks ? 1 : 0,
@@ -42,6 +49,7 @@ export function BgDrawings() {
       }),
     ]).start()
 
+    // Sin tareas
     Animated.parallel([
       Animated.timing(emptyOpacity, {
         toValue: hasTasks ? 0 : 1,
@@ -55,6 +63,7 @@ export function BgDrawings() {
       }),
     ]).start()
 
+    // Consejo1 y 2: solo si hay al menos una tarea visible
     Animated.parallel([
       Animated.timing(consejoOpacity, {
         toValue: visibleCount === 1 ? 1 : 0,
@@ -68,6 +77,7 @@ export function BgDrawings() {
       }),
     ]).start()
 
+    // Todelete: solo si hay exactamente 2 tareas visibles
     Animated.parallel([
       Animated.timing(todeleteOpacity, {
         toValue: visibleCount === 2 ? 1 : 0,
@@ -80,7 +90,7 @@ export function BgDrawings() {
         useNativeDriver: false,
       }),
     ]).start()
-  }, [hasTasks, visibleCount])
+  }, [hasTasks, visibleCount, selectedCategory])
 
   return (
     <>
@@ -143,9 +153,20 @@ export function BgDrawings() {
         resizeMode="contain"
       />
       <Animated.Image
-        source={require('../assets/gatito5.png')}
+        source={require('../assets/airplane.png')}
         style={[
-          styles.gatito5,
+          styles.airplane,
+          {
+            opacity: contentOpacity,
+            transform: [{ translateY: contentTranslate }],
+          },
+        ]}
+        resizeMode="contain"
+      />
+      <Animated.Image
+        source={require('../assets/depescar.png')}
+        style={[
+          styles.despescar,
           {
             opacity: contentOpacity,
             transform: [{ translateY: contentTranslate }],
@@ -165,7 +186,7 @@ export function BgDrawings() {
         resizeMode="contain"
       />
 
-      {/* 1 tarea visible */}
+      {/* Consejo1 y 2 */}
       <Animated.Image
         source={require('../assets/consejo1.png')}
         style={[
@@ -208,72 +229,81 @@ export function BgDrawings() {
 const styles = StyleSheet.create({
   options: {
     position: 'absolute',
-    top: height * 0.22,
-    left: width * 0.03,
-    width: width * 0.42,
-    height: height * 0.12,
+    top: responsiveSize(140),
+    left: responsiveSize(10),
+    width: responsiveSize(170),
+    height: responsiveSize(105),
   },
   filter: {
     position: 'absolute',
-    top: height * 0.2,
-    right: width * 0.04,
-    width: width * 0.45,
-    height: height * 0.12,
+    top: responsiveSize(125),
+    right: responsiveSize(10),
+    width: responsiveSize(170),
+    height: responsiveSize(105),
   },
   addtask: {
     position: 'absolute',
-    bottom: height * 0.33,
-    right: width * 0.03,
-    width: width * 0.65,
-    height: height * 0.12,
+    bottom: responsiveSize(210),
+    right: responsiveSize(12),
+    width: responsiveSize(240),
+    height: responsiveSize(130),
   },
   cloud: {
     position: 'absolute',
-    top: height * 0.12,
-    left: width * 0.05,
-    width: width * 0.25,
-    height: height * 0.1,
+    top: responsiveSize(80),
+    left: responsiveSize(18),
+    width: responsiveSize(90),
+    height: responsiveSize(70),
+    filter: 'grayscale(100%)',
   },
   island: {
     position: 'absolute',
-    top: height * 0.12,
-    right: width * 0.05,
-    width: width * 0.35,
-    height: height * 0.17,
+    top: responsiveSize(85),
+    right: responsiveSize(18),
+    width: responsiveSize(130),
+    height: responsiveSize(130),
+    filter: 'grayscale(100%)',
   },
-  gatito5: {
+  airplane: {
     position: 'absolute',
-    bottom: height * 0.16,
-    left: width * -0.05,
-    width: width * 0.25,
-    height: height * 0.12,
+    bottom: responsiveSize(120),
+    width: responsiveSize(95),
+    height: responsiveSize(90),
+    filter: 'grayscale(100%)',
+  },
+  despescar: {
+    position: 'absolute',
+    bottom: responsiveSize(150),
+    right: responsiveSize(-18),
+    width: responsiveSize(200),
+    height: responsiveSize(240),
   },
   gatito6: {
     position: 'absolute',
-    bottom: height * 0.08,
-    right: width * -0.02,
-    width: width * 0.25,
-    height: height * 0.12,
+    bottom: responsiveSize(60),
+    right: 0,
+    width: responsiveSize(70),
+    height: responsiveSize(85),
   },
   consejo1: {
     position: 'absolute',
-    bottom: height * 0.42,
-    left: width * 0.04,
-    width: width * 0.45,
-    height: height * 0.18,
+    top: responsiveSize(310),
+    left: responsiveSize(10),
+    width: responsiveSize(160),
+    height: responsiveSize(120),
   },
   consejo2: {
     position: 'absolute',
-    bottom: height * 0.34,
-    right: width * 0.02,
-    width: width * 0.45,
-    height: height * 0.18,
+    top: responsiveSize(320),
+    right: responsiveSize(10),
+    width: responsiveSize(160),
+    height: responsiveSize(120),
   },
   todelete: {
     position: 'absolute',
-    bottom: height * 0.32,
-    left: width * 0.25,
-    width: width * 0.48,
-    height: height * 0.16,
+    bottom: responsiveSize(260),
+    left: responsiveSize(100),
+    width: responsiveSize(190),
+    height: responsiveSize(140),
   },
 })

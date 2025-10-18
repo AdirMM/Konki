@@ -168,8 +168,8 @@ export function CategoriesModal() {
           height: responsiveSize(220),
           alignSelf: 'center',
           position: 'absolute',
-          bottom: responsiveSize(60),
-          right: responsiveSize(20),
+          bottom: responsiveSize(50),
+          right: responsiveSize(0),
         }}
         resizeMode="contain"
       />
@@ -206,18 +206,6 @@ export function CategoriesModal() {
           position: 'absolute',
           bottom: responsiveSize(250),
           left: responsiveSize(240),
-        }}
-        resizeMode="contain"
-      />
-      <Image
-        source={require('../../assets/gatito3.png')}
-        style={{
-          width: responsiveSize(90),
-          height: responsiveSize(90),
-          alignSelf: 'center',
-          position: 'absolute',
-          bottom: responsiveSize(180),
-          left: responsiveSize(50),
         }}
         resizeMode="contain"
       />

@@ -46,10 +46,9 @@ export function EmptyState({ src = 'no-tasks' }) {
 const styles = StyleSheet.create({
   image: {
     position: 'relative',
-    bottom: 64,
-    width: 300,
+    bottom: 10,
+    width: 340,
     height: 500,
     alignSelf: 'center',
-    opacity: 0.9,
   },
 })

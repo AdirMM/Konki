@@ -10,6 +10,7 @@ import {
 import { Feather } from '@expo/vector-icons'
 import { useTaskContext } from '../context/TaskContext'
 import { Shadow } from 'react-native-shadow-2'
+import { responsiveSize } from '../utils/responsive' // <-- Asegúrate de tener este helper
 
 export function TaskItem({
   task,
@@ -21,7 +22,7 @@ export function TaskItem({
 }) {
   const scaleAnim = useRef(new Animated.Value(0.5)).current
   const opacityAnim = useRef(new Animated.Value(0)).current
-  const heightAnim = useRef(new Animated.Value(105)).current
+  const heightAnim = useRef(new Animated.Value(responsiveSize(105))).current
   const containerOpacityAnim = useRef(new Animated.Value(1)).current
 
   const { removeTask } = useTaskContext()
@@ -33,15 +34,11 @@ export function TaskItem({
   useEffect(() => {
     scaleAnim.setValue(0.5)
     opacityAnim.setValue(0)
-
-    return () => {
-      clearTimeout(autoHideTimeoutRef.current)
-    }
+    return () => clearTimeout(autoHideTimeoutRef.current)
   }, [])
 
   useEffect(() => {
     if (!showCompleted && task.completed) {
-      // Ocultar con animación
       Animated.parallel([
         Animated.timing(containerOpacityAnim, {
           toValue: 0,
@@ -55,13 +52,12 @@ export function TaskItem({
         }),
       ]).start(() => setIsVisible(false))
     } else {
-      // Mostrar con animación
       setIsVisible(true)
       heightAnim.setValue(0)
       containerOpacityAnim.setValue(0)
       Animated.parallel([
         Animated.timing(heightAnim, {
-          toValue: 105,
+          toValue: responsiveSize(105),
           duration: 300,
           useNativeDriver: false,
         }),
@@ -78,7 +74,6 @@ export function TaskItem({
     longPressedRef.current = true
     setSelectedTask(task)
     setShowDeleteButton(true)
-
     clearTimeout(autoHideTimeoutRef.current)
 
     Animated.parallel([
@@ -107,9 +102,7 @@ export function TaskItem({
           duration: 300,
           useNativeDriver: false,
         }),
-      ]).start(() => {
-        setShowDeleteButton(false)
-      })
+      ]).start(() => setShowDeleteButton(false))
     }, 2000)
   }
 
@@ -181,9 +174,9 @@ export function TaskItem({
     >
       <Shadow
         distance={2}
-        offset={[0, 5]}
+        offset={[0, responsiveSize(5)]}
         startColor="rgba(0,0,0,0.9)"
-        containerStyle={{ borderRadius: 40 }}
+        containerStyle={{ borderRadius: responsiveSize(40) }}
       >
         <View style={styles.container}>
           <TouchableOpacity
@@ -193,7 +186,11 @@ export function TaskItem({
             delayLongPress={220}
             style={styles.taskWrapper}
           >
-            <Feather name={iconName} size={24} color={iconColor} />
+            <Feather
+              name={iconName}
+              size={responsiveSize(24)}
+              color={iconColor}
+            />
             <Animated.Text
               style={[
                 styles.taskText,
@@ -236,14 +233,14 @@ export function TaskItem({
 
 const styles = StyleSheet.create({
   outerMargin: {
-    marginVertical: 1,
+    marginVertical: responsiveSize(1),
     overflow: 'hidden',
   },
   container: {
     position: 'relative',
-    width: 270,
-    height: 90,
-    borderRadius: 16,
+    width: responsiveSize(270),
+    height: responsiveSize(90),
+    borderRadius: responsiveSize(16),
     overflow: 'visible',
     backgroundColor: '#111',
   },
@@ -252,29 +249,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
     flex: 1,
-    padding: 18,
+    padding: responsiveSize(18),
   },
   taskText: {
-    fontSize: 27,
+    fontSize: responsiveSize(27),
     textAlign: 'center',
     color: '#fff',
     flex: 1,
-    paddingLeft: 1,
+    paddingLeft: responsiveSize(1),
     fontFamily: 'Geo_400Regular',
   },
   deleteButton: {
     position: 'absolute',
     top: '15%',
-    left: 105,
+    left: responsiveSize(105),
     backgroundColor: '#dc2626',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 100,
-    width: 70,
-    height: 70,
+    paddingVertical: responsiveSize(6),
+    paddingHorizontal: responsiveSize(12),
+    borderRadius: responsiveSize(100),
+    width: responsiveSize(70),
+    height: responsiveSize(70),
     justifyContent: 'center',
     alignItems: 'center',
-    transform: [{ translateY: -40 }],
+    transform: [{ translateY: responsiveSize(-40) }],
   },
   deleteButtonInner: {
     flex: 1,
@@ -284,5 +281,6 @@ const styles = StyleSheet.create({
   deleteButtonText: {
     color: '#fff',
     fontWeight: 'bold',
+    fontSize: responsiveSize(14),
   },
 })

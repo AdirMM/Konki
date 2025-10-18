@@ -1,47 +1,53 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import React from 'react'
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+  Image,
+} from 'react-native'
 import { useUIContext } from '../context/UIContext'
-import { useTaskContext } from '../context/TaskContext'
-import { Entypo, AntDesign } from '@expo/vector-icons'
+import { Entypo } from '@expo/vector-icons'
 import { Shadow } from 'react-native-shadow-2'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+
+const { width } = Dimensions.get('window')
+const guidelineBaseWidth = 375
+const responsiveSize = (size) => (width / guidelineBaseWidth) * size
 
 export function TaskControls() {
-  const { toggleModal, showCompleted, setShowCompleted } = useUIContext()
-  const { tasks } = useTaskContext()
-
-  const completedCount = tasks.filter((task) => task.completed).length
+  const { toggleModal } = useUIContext()
+  const insets = useSafeAreaInsets()
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { paddingBottom: responsiveSize(20) + insets.bottom },
+      ]}
+    >
       {/* Botón flotante para agregar tarea */}
       <Shadow
-        distance={2}
-        startColor="#202020"
-        offset={[0, -2]}
-        style={{ marginBottom: 15 }}
+        distance={5}
+        startColor="#000"
+        offset={[0, 2]}
+        style={{ marginBottom: responsiveSize(15) }}
       >
         <TouchableOpacity
           style={styles.floatingButton}
           onPress={() => toggleModal('addTask')}
+          activeOpacity={0.85}
         >
-          <Entypo name="plus" size={28} color="black" />
+          <Entypo name="plus" size={responsiveSize(28)} color="black" />
         </TouchableOpacity>
       </Shadow>
 
-      <View style={styles.toggleContainer}>
-        <Shadow distance={10} startColor="#fff" offset={[0, 8]}>
-          <TouchableOpacity
-            style={styles.toggleButton}
-            onPress={() => setShowCompleted(!showCompleted)}
-          >
-            <Text style={styles.toggleText}>
-              {showCompleted
-                ? `Ocultar – ${completedCount}`
-                : `Mostrar – ${completedCount}`}
-            </Text>
-            <AntDesign name="check" size={24} color="white" />
-          </TouchableOpacity>
-        </Shadow>
-      </View>
+      {/* Imagen del gato debajo del botón */}
+      <Image
+        source={require('../assets/cat.png')}
+        style={styles.cat}
+        resizeMode="contain"
+      />
     </View>
   )
 }
@@ -49,40 +55,24 @@ export function TaskControls() {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 0,
+    bottom: -45,
     zIndex: 20,
     width: '100%',
     alignItems: 'center',
-    paddingBottom: 20,
   },
   floatingButton: {
-    padding: 20,
+    padding: responsiveSize(20),
     backgroundColor: 'white',
-    borderWidth: 2,
+    borderWidth: responsiveSize(2),
     borderColor: '#000',
-    borderRadius: 50,
-    marginBottom: 20,
+    borderRadius: responsiveSize(50),
+    marginBottom: responsiveSize(10),
   },
-  toggleContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 20,
-  },
-  toggleButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'black',
-    paddingHorizontal: 9,
-    paddingVertical: 10,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#fff',
-  },
-  toggleText: {
-    fontSize: 20,
-    marginRight: 8,
-    fontWeight: '500',
-    color: 'white',
-    fontFamily: 'Geo_400Regular',
+  cat: {
+    width: responsiveSize(80),
+    height: responsiveSize(80),
+    transform: [{ rotate: '180deg' }],
+    marginTop: responsiveSize(-18),
+    marginBottom: responsiveSize(10),
   },
 })
