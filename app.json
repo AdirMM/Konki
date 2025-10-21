@@ -9,7 +9,7 @@
     "backgroundColor": "#f8f8f8",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/konki-icon-light.png",
+      "image": "./assets/konki-logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#161616"
     },

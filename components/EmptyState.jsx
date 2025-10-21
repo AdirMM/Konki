@@ -1,15 +1,16 @@
-import { useEffect, useRef } from 'react'
-import { Animated, StyleSheet } from 'react-native'
+import { useEffect, useRef } from "react";
+import { Animated, StyleSheet } from "react-native";
+import { responsiveSize, responsiveVertical } from "../utils/responsive";
 
 const images = {
-  addtask2: require('../assets/addtask2.png'),
-  'no-tasks': require('../assets/notasks.png'),
-  nothing: require('../assets/nothing.png'),
-}
+  addtask2: require("../assets/addtask2.png"),
+  "no-tasks": require("../assets/notasks.png"),
+  nothing: require("../assets/nothing.png"),
+};
 
-export function EmptyState({ src = 'no-tasks' }) {
-  const opacity = useRef(new Animated.Value(0)).current
-  const translateY = useRef(new Animated.Value(50)).current
+export function EmptyState({ src = "no-tasks" }) {
+  const opacity = useRef(new Animated.Value(0)).current;
+  const translateY = useRef(new Animated.Value(responsiveVertical(50))).current;
 
   useEffect(() => {
     Animated.parallel([
@@ -23,10 +24,10 @@ export function EmptyState({ src = 'no-tasks' }) {
         duration: 400,
         useNativeDriver: false,
       }),
-    ]).start()
-  }, [])
+    ]).start();
+  }, []);
 
-  const source = images[src] || images['no-tasks'] // Protección extra
+  const source = images[src] || images["no-tasks"];
 
   return (
     <Animated.Image
@@ -40,15 +41,15 @@ export function EmptyState({ src = 'no-tasks' }) {
       ]}
       resizeMode="contain"
     />
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   image: {
-    position: 'relative',
-    bottom: 10,
-    width: 340,
-    height: 500,
-    alignSelf: 'center',
+    position: "relative",
+    bottom: responsiveVertical(10),
+    width: responsiveSize(340),
+    height: responsiveVertical(500),
+    alignSelf: "center",
   },
-})
+});
