@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,11 +6,11 @@ import {
   StyleSheet,
   Animated,
   Easing,
-} from 'react-native'
-import { Feather } from '@expo/vector-icons'
-import { useTaskContext } from '../context/TaskContext'
-import { Shadow } from 'react-native-shadow-2'
-import { responsiveSize } from '../utils/responsive' // <-- Asegúrate de tener este helper
+} from "react-native";
+import { Feather } from "@expo/vector-icons";
+import { useTaskContext } from "../context/TaskContext";
+import { Shadow } from "react-native-shadow-2";
+import { responsiveSize } from "../utils/responsive"; // <-- Asegúrate de tener este helper
 
 export function TaskItem({
   task,
@@ -18,63 +18,46 @@ export function TaskItem({
   setSelectedTask,
   toggleModal,
   clickTimeoutRef,
-  showCompleted,
 }) {
-  const scaleAnim = useRef(new Animated.Value(0.5)).current
-  const opacityAnim = useRef(new Animated.Value(0)).current
-  const heightAnim = useRef(new Animated.Value(responsiveSize(105))).current
-  const containerOpacityAnim = useRef(new Animated.Value(1)).current
+  const scaleAnim = useRef(new Animated.Value(0.5)).current;
+  const opacityAnim = useRef(new Animated.Value(0)).current;
+  const heightAnim = useRef(new Animated.Value(responsiveSize(105))).current;
+  const containerOpacityAnim = useRef(new Animated.Value(1)).current;
 
-  const { removeTask } = useTaskContext()
-  const [showDeleteButton, setShowDeleteButton] = useState(false)
-  const autoHideTimeoutRef = useRef(null)
-  const longPressedRef = useRef(false)
-  const [isVisible, setIsVisible] = useState(true)
-
-  useEffect(() => {
-    scaleAnim.setValue(0.5)
-    opacityAnim.setValue(0)
-    return () => clearTimeout(autoHideTimeoutRef.current)
-  }, [])
+  const { removeTask } = useTaskContext();
+  const [showDeleteButton, setShowDeleteButton] = useState(false);
+  const autoHideTimeoutRef = useRef(null);
+  const longPressedRef = useRef(false);
+  const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
-    if (!showCompleted && task.completed) {
-      Animated.parallel([
-        Animated.timing(containerOpacityAnim, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: false,
-        }),
-        Animated.timing(heightAnim, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: false,
-        }),
-      ]).start(() => setIsVisible(false))
-    } else {
-      setIsVisible(true)
-      heightAnim.setValue(0)
-      containerOpacityAnim.setValue(0)
-      Animated.parallel([
-        Animated.timing(heightAnim, {
-          toValue: responsiveSize(105),
-          duration: 300,
-          useNativeDriver: false,
-        }),
-        Animated.timing(containerOpacityAnim, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: false,
-        }),
-      ]).start()
-    }
-  }, [showCompleted])
+    scaleAnim.setValue(0.5);
+    opacityAnim.setValue(0);
+    return () => clearTimeout(autoHideTimeoutRef.current);
+  }, []);
+
+  // Mantener la tarea visible siempre
+  useEffect(() => {
+    setIsVisible(true);
+    Animated.parallel([
+      Animated.timing(heightAnim, {
+        toValue: responsiveSize(105),
+        duration: 300,
+        useNativeDriver: false,
+      }),
+      Animated.timing(containerOpacityAnim, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: false,
+      }),
+    ]).start();
+  }, []);
 
   const handleLongPress = () => {
-    longPressedRef.current = true
-    setSelectedTask(task)
-    setShowDeleteButton(true)
-    clearTimeout(autoHideTimeoutRef.current)
+    longPressedRef.current = true;
+    setSelectedTask(task);
+    setShowDeleteButton(true);
+    clearTimeout(autoHideTimeoutRef.current);
 
     Animated.parallel([
       Animated.timing(scaleAnim, {
@@ -88,7 +71,7 @@ export function TaskItem({
         duration: 300,
         useNativeDriver: false,
       }),
-    ]).start()
+    ]).start();
 
     autoHideTimeoutRef.current = setTimeout(() => {
       Animated.parallel([
@@ -102,28 +85,28 @@ export function TaskItem({
           duration: 300,
           useNativeDriver: false,
         }),
-      ]).start(() => setShowDeleteButton(false))
-    }, 2000)
-  }
+      ]).start(() => setShowDeleteButton(false));
+    }, 2000);
+  };
 
   const handleClick = () => {
     if (longPressedRef.current) {
-      longPressedRef.current = false
-      return
+      longPressedRef.current = false;
+      return;
     }
 
     if (clickTimeoutRef.current) {
-      clearTimeout(clickTimeoutRef.current)
-      clickTimeoutRef.current = null
-      setSelectedTask(task)
-      toggleModal('editTask')
+      clearTimeout(clickTimeoutRef.current);
+      clickTimeoutRef.current = null;
+      setSelectedTask(task);
+      toggleModal("editTask");
     } else {
       clickTimeoutRef.current = setTimeout(() => {
-        handleToggleCompleted(task)
-        clickTimeoutRef.current = null
-      }, 170)
+        handleToggleCompleted(task);
+        clickTimeoutRef.current = null;
+      }, 170);
     }
-  }
+  };
 
   const handleDeleteClick = () => {
     Animated.parallel([
@@ -138,32 +121,32 @@ export function TaskItem({
         useNativeDriver: false,
       }),
     ]).start(() => {
-      removeTask(task.id)
-      setShowDeleteButton(false)
-    })
-  }
+      removeTask(task.id);
+      setShowDeleteButton(false);
+    });
+  };
 
   const completedAnim = useRef(
     new Animated.Value(task.completed ? 1 : 0)
-  ).current
+  ).current;
 
   useEffect(() => {
     Animated.timing(completedAnim, {
       toValue: task.completed ? 1 : 0,
       duration: 300,
       useNativeDriver: false,
-    }).start()
-  }, [task.completed])
+    }).start();
+  }, [task.completed]);
 
   const animatedColor = completedAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: ['#fff', '#888'],
-  })
+    outputRange: ["#fff", "#888"],
+  });
 
-  if (!isVisible) return null
+  if (!isVisible) return null;
 
-  const iconName = task.category?.iconName || 'list'
-  const iconColor = task.category?.color || '#000'
+  const iconName = task.category?.iconName || "list";
+  const iconColor = task.category?.color || "#000";
 
   return (
     <Animated.View
@@ -196,7 +179,7 @@ export function TaskItem({
                 styles.taskText,
                 {
                   color: animatedColor,
-                  textDecorationLine: task.completed ? 'line-through' : 'none',
+                  textDecorationLine: task.completed ? "line-through" : "none",
                 },
               ]}
             >
@@ -228,59 +211,59 @@ export function TaskItem({
         </View>
       </Shadow>
     </Animated.View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   outerMargin: {
     marginVertical: responsiveSize(1),
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   container: {
-    position: 'relative',
+    position: "relative",
     width: responsiveSize(270),
     height: responsiveSize(90),
     borderRadius: responsiveSize(16),
-    overflow: 'visible',
-    backgroundColor: '#111',
+    overflow: "visible",
+    backgroundColor: "#111",
   },
   taskWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
     flex: 1,
     padding: responsiveSize(18),
   },
   taskText: {
     fontSize: responsiveSize(27),
-    textAlign: 'center',
-    color: '#fff',
+    textAlign: "center",
+    color: "#fff",
     flex: 1,
     paddingLeft: responsiveSize(1),
-    fontFamily: 'Geo_400Regular',
+    fontFamily: "Geo_400Regular",
   },
   deleteButton: {
-    position: 'absolute',
-    top: '15%',
+    position: "absolute",
+    top: "15%",
     left: responsiveSize(105),
-    backgroundColor: '#dc2626',
+    backgroundColor: "#dc2626",
     paddingVertical: responsiveSize(6),
     paddingHorizontal: responsiveSize(12),
     borderRadius: responsiveSize(100),
     width: responsiveSize(70),
     height: responsiveSize(70),
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     transform: [{ translateY: responsiveSize(-40) }],
   },
   deleteButtonInner: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   deleteButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
     fontSize: responsiveSize(14),
   },
-})
+});

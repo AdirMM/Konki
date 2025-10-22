@@ -13,7 +13,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AddTask } from "./components/ui/AddTask";
 import { CategoryModal } from "./components/ui/CategoryModal";
 import { CategoriesModal } from "./components/ui/CategoriesModal";
-import { TaskControls } from "./components/TaskControls";
+import { AddTaskButton } from "./components/AddTaskButton";
 import { Menu } from "./components/ui/Menu";
 import { BgDrawings } from "./components/BgDrawings";
 import { FilterCategory } from "./components/ui/FilterCategory";
@@ -69,7 +69,7 @@ export default function AppContent() {
             style={[
               styles.container,
               {
-                paddingTop: insets.top + responsiveVertical(25),
+                paddingTop: insets.top + responsiveVertical(5),
                 paddingBottom: insets.bottom + responsiveVertical(45),
               },
             ]}
@@ -112,7 +112,7 @@ export default function AppContent() {
                 { bottom: responsiveVertical(60) + insets.bottom },
               ]}
             >
-              <TaskControls />
+              <AddTaskButton />
             </View>
           </View>
         </ImageBackground>

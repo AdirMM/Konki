@@ -20,8 +20,8 @@ import { CategoryList } from "./CategoryList";
 // ✅ Importa helpers responsivos
 import {
   responsiveSize,
-  responsiveWidth,
-  responsiveHeight,
+  responsiveVertical,
+  responsiveFont,
 } from "../../utils/responsive";
 
 export function AddTask() {
@@ -33,15 +33,12 @@ export function AddTask() {
   const [canAddCategory, setCanAddCategory] = useState(true);
   const maxLength = 100;
 
-  // ⚡ Reinicia valores cada vez que se abre el modal
   useEffect(() => {
     if (modals?.addTask?.isOpen) {
       setTaskInput("");
-
       const defaultCategory =
         categories?.find((cat) => cat.name === "Todas") || category;
       setSelectedCategory(defaultCategory);
-
       setCanAddCategory(categories.length < maxCategories);
     }
   }, [modals?.addTask?.isOpen, categories]);
@@ -70,14 +67,13 @@ export function AddTask() {
           {taskInput.length}/{maxLength} caracteres
         </Text>
 
-        {/* Input de tarea */}
         <Shadow
-          distance={10}
+          distance={responsiveSize(10)}
           startColor="rgba(0,0,0,1)"
           finalColor="rgba(0,0,0,0)"
-          offset={[-10, 8]}
-          radius={10}
-          style={{ marginBottom: responsiveSize(8) }}
+          offset={[-responsiveSize(10), responsiveSize(8)]}
+          radius={responsiveSize(10)}
+          style={{ marginBottom: responsiveVertical(8) }}
         >
           <ImageBackground
             source={require("../../assets/notebook.jpg")}
@@ -98,7 +94,6 @@ export function AddTask() {
           </ImageBackground>
         </Shadow>
 
-        {/* Botón Crear Categoría */}
         {canAddCategory && (
           <TouchableOpacity
             style={styles.touchWrapper}
@@ -106,9 +101,9 @@ export function AddTask() {
             activeOpacity={0.85}
           >
             <Shadow
-              distance={5}
+              distance={responsiveSize(5)}
               startColor="#000"
-              offset={[0, 2]}
+              offset={[0, responsiveSize(2)]}
               style={styles.addCategoryButton}
             >
               <View style={styles.fullButtonArea}>
@@ -118,12 +113,11 @@ export function AddTask() {
           </TouchableOpacity>
         )}
 
-        {/* Lista de categorías */}
         <Shadow
-          distance={7}
+          distance={responsiveSize(7)}
           startColor="rgba(0,0,0,1)"
-          offset={[-5, 8]}
-          radius={10}
+          offset={[-responsiveSize(5), responsiveSize(8)]}
+          radius={responsiveSize(10)}
         >
           <View style={styles.shadowContainer}>
             <CategoryList
@@ -139,7 +133,6 @@ export function AddTask() {
         />
       </View>
 
-      {/* Imágenes decorativas */}
       <Image
         source={require("../../assets/cloud.png")}
         style={[styles.cloudImage, { left: responsiveSize(-10) }]}
@@ -149,13 +142,13 @@ export function AddTask() {
         style={[styles.cloudImage, { right: responsiveSize(-10) }]}
       />
       <Image
-        source={require("../../assets/tree.png")}
-        style={styles.treeImage}
+        source={require("../../assets/spiderman.png")}
+        style={styles.spiderman}
         resizeMode="contain"
       />
       <Image
-        source={require("../../assets/gatito1.png")}
-        style={styles.catImage}
+        source={require("../../assets/spider.png")}
+        style={styles.spider}
         resizeMode="contain"
       />
     </CustomModal>
@@ -164,20 +157,20 @@ export function AddTask() {
 
 const styles = StyleSheet.create({
   modalView: {
-    width: "90%",
+    width: responsiveSize(335),
     borderRadius: responsiveSize(12),
     alignItems: "center",
     zIndex: 1000,
-    gap: responsiveSize(20),
+    gap: responsiveVertical(20),
   },
   charCount: {
     color: "#646464",
-    fontSize: responsiveSize(17),
+    fontSize: responsiveFont(17),
     fontFamily: "Geo_400Regular",
   },
   inputBackground: {
-    width: responsiveWidth(320), // reemplazo de width * 0.85
-    minHeight: responsiveHeight(180), // reemplazo de height * 0.22
+    width: responsiveSize(320),
+    minHeight: responsiveVertical(180),
     borderRadius: responsiveSize(10),
     borderWidth: responsiveSize(2.5),
     overflow: "hidden",
@@ -186,7 +179,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: responsiveSize(10),
     fontFamily: "Geo_400Regular",
-    fontSize: responsiveSize(29),
+    fontSize: responsiveFont(20),
     letterSpacing: 1.2,
     textAlignVertical: "top",
     backgroundColor: "transparent",
@@ -202,19 +195,19 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   addCategoryButton: {
-    paddingVertical: responsiveSize(14),
+    paddingVertical: responsiveVertical(14),
     borderRadius: responsiveSize(20),
-    width: responsiveWidth(170), // reemplazo de width * 0.45
+    width: responsiveSize(170),
   },
   addCategory: {
     color: "white",
-    fontSize: responsiveSize(19),
+    fontSize: responsiveFont(19),
     textAlign: "center",
     fontFamily: "Geo_400Regular",
   },
   shadowContainer: {
-    height: responsiveSize(60),
-    marginBottom: responsiveSize(30),
+    height: responsiveVertical(60),
+    marginBottom: responsiveVertical(30),
     backgroundColor: "white",
     borderWidth: responsiveSize(2),
     borderRadius: responsiveSize(10),
@@ -222,25 +215,25 @@ const styles = StyleSheet.create({
   },
   cloudImage: {
     width: responsiveSize(110),
-    height: responsiveSize(70),
+    height: responsiveVertical(70),
     alignSelf: "center",
     position: "absolute",
-    bottom: responsiveSize(210),
+    bottom: responsiveVertical(210),
   },
-  treeImage: {
+  spiderman: {
     width: responsiveSize(120),
-    height: responsiveSize(120),
+    height: responsiveVertical(120),
     alignSelf: "center",
     position: "absolute",
-    bottom: responsiveSize(90),
-    right: responsiveSize(-10),
+    bottom: responsiveVertical(90),
+    left: responsiveSize(5),
   },
-  catImage: {
-    width: responsiveSize(70),
-    height: responsiveSize(70),
+  spider: {
+    width: responsiveSize(80),
+    height: responsiveVertical(80),
     alignSelf: "center",
     position: "absolute",
-    bottom: responsiveSize(110),
-    left: responsiveSize(30),
+    bottom: responsiveVertical(100),
+    right: responsiveSize(20),
   },
 });

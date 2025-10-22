@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -6,43 +6,41 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
-  Dimensions,
   Animated,
-} from 'react-native'
-import { useUIContext } from '../../context/UIContext'
-import { useCategoryContext } from '../../context/CategoryContext'
-import { CustomModal } from './CustomModal'
-import { Feather } from '@expo/vector-icons'
-import { Shadow } from 'react-native-shadow-2'
+  Dimensions,
+} from "react-native";
+import { useUIContext } from "../../context/UIContext";
+import { useCategoryContext } from "../../context/CategoryContext";
+import { CustomModal } from "./CustomModal";
+import { Feather } from "@expo/vector-icons";
+import { Shadow } from "react-native-shadow-2";
+import { responsiveSize, responsiveVertical } from "../../utils/responsive";
 
-const guidelineBaseWidth = 375
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window')
-const columns = 2
-const horizontalPadding = 16 * (columns - 1)
-const itemWidth = (screenWidth * 0.8 - horizontalPadding) / columns
+const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+const columns = 2;
+const horizontalPadding = 16 * (columns - 1);
+const itemWidth = (screenWidth * 0.8 - horizontalPadding) / columns;
 
 export function CategoriesModal() {
-  const { modals, toggleModal, setSelectedCategory } = useUIContext()
-  const { categories } = useCategoryContext()
-  const [showArrow, setShowArrow] = useState(false)
-  const [isAtEnd, setIsAtEnd] = useState(false)
-  const fadeAnim = useRef(new Animated.Value(0)).current
-  const scrollRef = useRef(null)
-
-  const responsiveSize = (size) => (screenWidth / guidelineBaseWidth) * size
+  const { modals, toggleModal, setSelectedCategory } = useUIContext();
+  const { categories } = useCategoryContext();
+  const [showArrow, setShowArrow] = useState(false);
+  const [isAtEnd, setIsAtEnd] = useState(false);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scrollRef = useRef(null);
 
   const handleClick = (cat) => {
-    setSelectedCategory(cat)
-    toggleModal('categories')
+    setSelectedCategory(cat);
+    toggleModal("categories");
     setTimeout(() => {
-      toggleModal('category')
-    }, 300)
-  }
+      toggleModal("category");
+    }, 300);
+  };
 
   const handleContentSizeChange = (contentWidth, contentHeight) => {
     if (contentHeight > screenHeight * 0.38) {
       if (!showArrow) {
-        setShowArrow(true)
+        setShowArrow(true);
         Animated.loop(
           Animated.sequence([
             Animated.timing(fadeAnim, {
@@ -56,38 +54,37 @@ export function CategoriesModal() {
               useNativeDriver: true,
             }),
           ])
-        ).start()
+        ).start();
       }
     } else {
-      setShowArrow(false)
-      fadeAnim.setValue(0)
+      setShowArrow(false);
+      fadeAnim.setValue(0);
     }
-  }
+  };
 
   const handleScroll = (event) => {
-    const { contentOffset, layoutMeasurement, contentSize } = event.nativeEvent
+    const { contentOffset, layoutMeasurement, contentSize } = event.nativeEvent;
     const endReached =
-      contentOffset.y + layoutMeasurement.height >= contentSize.height - 10
-
-    setIsAtEnd(endReached)
-  }
+      contentOffset.y + layoutMeasurement.height >= contentSize.height - 10;
+    setIsAtEnd(endReached);
+  };
 
   const handleArrowPress = () => {
     if (isAtEnd && scrollRef.current) {
-      scrollRef.current.scrollTo({ y: 0, animated: true })
-      setIsAtEnd(false)
+      scrollRef.current.scrollTo({ y: 0, animated: true });
+      setIsAtEnd(false);
     } else if (scrollRef.current) {
-      scrollRef.current.scrollToEnd({ animated: true })
+      scrollRef.current.scrollToEnd({ animated: true });
     }
-  }
+  };
 
-  const styles = createStyles(responsiveSize, itemWidth)
+  const styles = createStyles(itemWidth);
 
   return (
     <CustomModal
       modalName="categories"
       isOpen={modals?.categories?.isOpen || false}
-      onClose={() => toggleModal('categories')}
+      onClose={() => toggleModal("categories")}
       title="Categorías"
     >
       <View style={styles.modalView}>
@@ -97,43 +94,46 @@ export function CategoriesModal() {
 
         <ScrollView
           ref={scrollRef}
-          style={{ maxHeight: screenHeight * 0.38, width: '100%' }}
+          style={{ maxHeight: screenHeight * 0.38, width: "100%" }}
           contentContainerStyle={styles.gridContainer}
           onContentSizeChange={handleContentSizeChange}
           onScroll={handleScroll}
           scrollEventThrottle={16}
         >
           {categories
-            .filter((cat) => cat.id !== 'todas')
+            .filter((cat) => cat.id !== "todas")
             .slice(1)
-            .map((cat) => (
-              <View
-                key={cat.id}
-                style={{ width: itemWidth }} // Contenedor fijo
-              >
-                <Shadow
-                  distance={8}
-                  startColor="#000"
-                  offset={[0, 5]}
-                  style={{ flex: 1 }}
-                >
-                  <TouchableOpacity
-                    onPress={() => handleClick(cat)}
-                    activeOpacity={1}
-                    style={[styles.categoryItem, { flex: 1 }]} // Ocupa todo el Shadow
+            .map((cat, index) => {
+              const isDisabled = index < 4; // primeras 4 categorías deshabilitadas
+              return (
+                <View key={cat.id} style={{ width: itemWidth }}>
+                  <Shadow
+                    distance={8}
+                    startColor="#000"
+                    offset={[0, 5]}
+                    style={{ flex: 1 }}
                   >
-                    <View style={styles.buttonContent}>
-                      <Feather
-                        name={cat.iconName || 'layers'}
-                        size={responsiveSize(20)}
-                        color={cat.color}
-                      />
-                      <Text style={styles.categoryText}>{cat.name}</Text>
-                    </View>
-                  </TouchableOpacity>
-                </Shadow>
-              </View>
-            ))}
+                    <TouchableOpacity
+                      onPress={() => !isDisabled && handleClick(cat)}
+                      activeOpacity={isDisabled ? 0.5 : 1} // si está deshabilitada no hace efecto al presionar
+                      style={[
+                        styles.categoryItem,
+                        { flex: 1, opacity: isDisabled ? 0.5 : 1 },
+                      ]}
+                    >
+                      <View style={styles.buttonContent}>
+                        <Feather
+                          name={cat.iconName || "layers"}
+                          size={responsiveSize(20)}
+                          color={cat.color}
+                        />
+                        <Text style={styles.categoryText}>{cat.name}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </Shadow>
+                </View>
+              );
+            })}
         </ScrollView>
 
         {showArrow && (
@@ -149,7 +149,7 @@ export function CategoriesModal() {
                   style={[styles.arrowContainer, { opacity: fadeAnim }]}
                 >
                   <Feather
-                    name={isAtEnd ? 'chevron-up' : 'chevron-down'}
+                    name={isAtEnd ? "chevron-up" : "chevron-down"}
                     size={responsiveSize(40)}
                     color="#fff"
                   />
@@ -162,109 +162,120 @@ export function CategoriesModal() {
 
       {/* Imágenes decorativas */}
       <Image
-        source={require('../../assets/island.png')}
+        source={require("../../assets/island3.png")}
         style={{
           width: responsiveSize(220),
           height: responsiveSize(220),
-          alignSelf: 'center',
-          position: 'absolute',
-          bottom: responsiveSize(50),
-          right: responsiveSize(0),
+          alignSelf: "center",
+          position: "absolute",
+          bottom: responsiveVertical(35),
+          right: 0,
         }}
         resizeMode="contain"
       />
       <Image
-        source={require('../../assets/gatito1.png')}
+        source={require("../../assets/airplane1.png")}
         style={{
           width: responsiveSize(90),
           height: responsiveSize(90),
-          alignSelf: 'center',
-          position: 'absolute',
-          bottom: responsiveSize(50),
+          alignSelf: "center",
+          position: "absolute",
+          bottom: responsiveVertical(180),
+          left: responsiveSize(30),
+        }}
+        resizeMode="contain"
+      />
+      <Image
+        source={require("../../assets/shark.png")}
+        style={{
+          width: responsiveSize(70),
+          height: responsiveSize(70),
+          alignSelf: "center",
+          position: "absolute",
+          bottom: responsiveVertical(30),
+          left: responsiveSize(70),
+        }}
+        resizeMode="contain"
+      />
+      <Image
+        source={require("../../assets/cloud.png")}
+        style={{
+          width: responsiveSize(110),
+          height: responsiveSize(110),
+          alignSelf: "center",
+          position: "absolute",
+          bottom: responsiveVertical(300),
           left: responsiveSize(50),
         }}
         resizeMode="contain"
       />
       <Image
-        source={require('../../assets/cloud.png')}
+        source={require("../../assets/cloud.png")}
         style={{
-          width: responsiveSize(160),
-          height: responsiveSize(160),
-          alignSelf: 'center',
-          position: 'absolute',
-          bottom: responsiveSize(250),
-          left: responsiveSize(50),
-        }}
-        resizeMode="contain"
-      />
-      <Image
-        source={require('../../assets/cloud.png')}
-        style={{
-          width: responsiveSize(160),
-          height: responsiveSize(160),
-          alignSelf: 'center',
-          position: 'absolute',
-          bottom: responsiveSize(250),
+          width: responsiveSize(110),
+          height: responsiveSize(110),
+          alignSelf: "center",
+          position: "absolute",
+          bottom: responsiveVertical(300),
           left: responsiveSize(240),
         }}
         resizeMode="contain"
       />
     </CustomModal>
-  )
+  );
 }
 
-const createStyles = (responsiveSize, itemWidth) =>
+const createStyles = (itemWidth) =>
   StyleSheet.create({
     modalView: {
-      width: '85%',
-      alignSelf: 'center',
+      width: "85%",
+      alignSelf: "center",
       borderRadius: responsiveSize(12),
       zIndex: 1000,
-      alignItems: 'center',
+      alignItems: "center",
     },
     note: {
-      textAlign: 'center',
-      color: '#000',
+      textAlign: "center",
+      color: "#000",
       fontSize: responsiveSize(20),
-      fontFamily: 'Geo_400Regular',
-      marginBottom: responsiveSize(25),
+      fontFamily: "Geo_400Regular",
+      marginBottom: responsiveVertical(25),
     },
     gridContainer: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      justifyContent: 'space-between',
+      flexDirection: "row",
+      flexWrap: "wrap",
+      justifyContent: "space-between",
       paddingHorizontal: responsiveSize(4),
       gap: responsiveSize(10),
     },
     categoryItem: {
       width: itemWidth,
-      height: responsiveSize(55),
-      justifyContent: 'center',
+      height: responsiveVertical(55),
+      justifyContent: "center",
       borderWidth: responsiveSize(2),
       borderRadius: responsiveSize(10),
       padding: responsiveSize(10),
-      marginBottom: responsiveSize(16),
-      borderColor: '#000',
+      marginBottom: responsiveVertical(16),
+      borderColor: "#000",
     },
     buttonContent: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: responsiveSize(10),
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: responsiveSize(5),
     },
     categoryText: {
       fontSize: responsiveSize(22),
-      letterSpacing: 1,
-      fontFamily: 'Geo_400Regular',
-      color: '#fff',
+      fontFamily: "Geo_400Regular",
+      color: "#fff",
     },
     arrowContainer: {
-      alignItems: 'center',
-      justifyContent: 'center',
+      alignItems: "center",
+      justifyContent: "center",
       padding: responsiveSize(4),
     },
     arrowShadow: {
-      marginTop: responsiveSize(10),
-      alignSelf: 'center',
+      marginTop: responsiveVertical(10),
+      alignSelf: "center",
     },
-  })
+  });

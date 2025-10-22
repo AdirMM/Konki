@@ -1,111 +1,112 @@
-import { createContext, useState, useContext, useEffect } from 'react'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { useCategoryContext } from './CategoryContext'
+import { createContext, useState, useContext, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useCategoryContext } from "./CategoryContext";
+import uuid from "react-native-uuid";
 
-const TaskContext = createContext()
+const TaskContext = createContext();
 
 export function TaskProvider({ children }) {
-  const [tasks, setTasks] = useState([])
-  const [taskInput, setTaskInput] = useState('')
-  const [selectedTask, setSelectedTask] = useState({})
-  const { category } = useCategoryContext()
+  const [tasks, setTasks] = useState([]);
+  const [taskInput, setTaskInput] = useState("");
+  const [selectedTask, setSelectedTask] = useState({});
+  const { category } = useCategoryContext();
 
-  const hasCompletedTasks = tasks.some((task) => task.completed)
+  const hasCompletedTasks = tasks.some((task) => task.completed);
 
   const addTask = async (text, selectedCategory = category) => {
-    if (!text.trim()) return
+    if (!text.trim()) return;
 
-    const { id, name, iconName, color } = selectedCategory
+    const { id, name, iconName, color } = selectedCategory;
 
     const newTask = {
-      id: Date.now(),
+      id: uuid.v4(),
       text: text.trim(),
       category: { id, name, iconName, color },
       completed: false,
       createAt: new Date().toISOString(),
-    }
+    };
 
-    const updatedTasks = [...tasks, newTask]
-    setTasks(updatedTasks)
+    const updatedTasks = [...tasks, newTask];
+    setTasks(updatedTasks);
     try {
-      await AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks))
+      await AsyncStorage.setItem("tasks", JSON.stringify(updatedTasks));
     } catch (error) {
-      console.error('Error guardando tareas:', error)
+      console.error("Error guardando tareas:", error);
     }
-  }
+  };
 
   const editTask = async (id, updatedTask) => {
     const updatedTasks = tasks.map((task) =>
       task.id === id ? { ...task, ...updatedTask } : task
-    )
-    setTasks(updatedTasks)
+    );
+    setTasks(updatedTasks);
     try {
-      await AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks))
+      await AsyncStorage.setItem("tasks", JSON.stringify(updatedTasks));
     } catch (error) {
-      console.error('Error editando tareas:', error)
+      console.error("Error editando tareas:", error);
     }
-  }
+  };
 
   const toggleCompleted = async (id) => {
     const updatedTasks = tasks.map((task) =>
       task.id === id ? { ...task, completed: !task.completed } : task
-    )
-    setTasks(updatedTasks)
+    );
+    setTasks(updatedTasks);
     try {
-      await AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks))
+      await AsyncStorage.setItem("tasks", JSON.stringify(updatedTasks));
     } catch (error) {
-      console.error('Error completando la tarea:', error)
+      console.error("Error completando la tarea:", error);
     }
-  }
+  };
 
   const removeTask = async (id) => {
-    const updatedTasks = tasks.filter((task) => task.id !== id)
-    setTasks(updatedTasks)
+    const updatedTasks = tasks.filter((task) => task.id !== id);
+    setTasks(updatedTasks);
 
     if (updatedTasks.length === 0) {
       try {
-        await AsyncStorage.removeItem('tasks')
+        await AsyncStorage.removeItem("tasks");
       } catch (error) {
-        console.log('Error al eliminar la tarea:', error)
+        console.log("Error al eliminar la tarea:", error);
       }
     } else {
       try {
-        await AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks))
+        await AsyncStorage.setItem("tasks", JSON.stringify(updatedTasks));
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
     }
-  }
+  };
 
   const deleteCompletedTask = async () => {
-    const updatedTasks = tasks.filter((task) => !task.completed)
-    setTasks(updatedTasks)
+    const updatedTasks = tasks.filter((task) => !task.completed);
+    setTasks(updatedTasks);
     try {
-      await AsyncStorage.setItem('tasks', JSON.stringify(updatedTasks))
+      await AsyncStorage.setItem("tasks", JSON.stringify(updatedTasks));
     } catch (error) {
-      console.error('Error eliminando tareas completadas:', error)
+      console.error("Error eliminando tareas completadas:", error);
     }
-  }
+  };
 
   // Cargar tareas desde almacenamiento al iniciar
   useEffect(() => {
     const loadTasks = async () => {
       try {
-        const savedTasks = await AsyncStorage.getItem('tasks')
+        const savedTasks = await AsyncStorage.getItem("tasks");
         if (savedTasks) {
-          const parsed = JSON.parse(savedTasks)
+          const parsed = JSON.parse(savedTasks);
           if (Array.isArray(parsed)) {
-            setTasks(parsed)
+            setTasks(parsed);
           } else {
-            console.warn('⚠️ Tareas guardadas no son válidas:', parsed)
+            console.warn("⚠️ Tareas guardadas no son válidas:", parsed);
           }
         }
       } catch (error) {
-        console.warn('❌ Error cargando tareas desde AsyncStorage:', error)
+        console.warn("❌ Error cargando tareas desde AsyncStorage:", error);
       }
-    }
-    loadTasks()
-  }, [])
+    };
+    loadTasks();
+  }, []);
 
   return (
     <TaskContext.Provider
@@ -126,10 +127,10 @@ export function TaskProvider({ children }) {
     >
       {children}
     </TaskContext.Provider>
-  )
+  );
 }
 
 export function useTaskContext() {
-  const context = useContext(TaskContext)
-  return context
+  const context = useContext(TaskContext);
+  return context;
 }

@@ -1,17 +1,16 @@
-import React, { createContext, useState, useContext } from 'react'
-import { useTaskContext } from './TaskContext'
-const UIContext = createContext(null)
+import React, { createContext, useState, useContext } from "react";
+import { useTaskContext } from "./TaskContext";
+const UIContext = createContext(null);
 
 export function UIProvider({ children }) {
-  const [showCompleted, setShowCompleted] = useState(true)
-  const [selectedCategory, setSelectedCategory] = useState(null)
-  const [isTop, setIsTop] = useState(true) // Puedes actualizarlo desde un ScrollView si lo necesitas
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [isTop, setIsTop] = useState(true); // Puedes actualizarlo desde un ScrollView si lo necesitas
 
-  const { tasks } = useTaskContext()
+  const { tasks } = useTaskContext();
 
-  const drawingsExists = Array.isArray(tasks) && tasks.length === 0
-  const firstTask = Array.isArray(tasks) && tasks.length === 1
-  const secondTask = Array.isArray(tasks) && tasks.length === 2
+  const drawingsExists = Array.isArray(tasks) && tasks.length === 0;
+  const firstTask = Array.isArray(tasks) && tasks.length === 1;
+  const secondTask = Array.isArray(tasks) && tasks.length === 2;
 
   const [modals, setModals] = useState({
     addTask: { isOpen: false, isAnimating: false },
@@ -19,7 +18,7 @@ export function UIProvider({ children }) {
     category: { isOpen: false, isAnimating: false },
     categories: { isOpen: false, isAnimating: false },
     message: { isOpen: false, isAnimating: false },
-  })
+  });
 
   const toggleModal = (name) => {
     setModals((prev) => ({
@@ -28,16 +27,16 @@ export function UIProvider({ children }) {
         ...prev[name],
         isOpen: !prev[name]?.isOpen,
       },
-    }))
-  }
+    }));
+  };
 
   const switchModal = (from, to) => {
     setModals((prev) => ({
       ...prev,
       [from]: { isOpen: false, isAnimating: true },
       [to]: { isOpen: true, isAnimating: false },
-    }))
-  }
+    }));
+  };
 
   return (
     <UIContext.Provider
@@ -45,8 +44,7 @@ export function UIProvider({ children }) {
         modals,
         setModals,
         toggleModal,
-        showCompleted,
-        setShowCompleted,
+
         selectedCategory,
         setSelectedCategory,
         isTop,
@@ -59,9 +57,9 @@ export function UIProvider({ children }) {
     >
       {children}
     </UIContext.Provider>
-  )
+  );
 }
 
 export function useUIContext() {
-  return useContext(UIContext)
+  return useContext(UIContext);
 }

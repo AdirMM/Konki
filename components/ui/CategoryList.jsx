@@ -1,28 +1,35 @@
+import React from "react";
 import {
   View,
   Text,
   ScrollView,
   TouchableOpacity,
   StyleSheet,
-} from 'react-native'
-import { Feather } from '@expo/vector-icons'
-import { useCategoryContext } from '../../context/CategoryContext'
+} from "react-native";
+import { Feather } from "@expo/vector-icons";
+import { useCategoryContext } from "../../context/CategoryContext";
+import {
+  responsiveSize,
+  responsiveVertical,
+  responsiveFont,
+} from "../../utils/responsive";
 
 export function CategoryList({ selected, onSelect }) {
   const {
     categories,
     category: globalCategory,
     setCategory: setGlobalCategory,
-  } = useCategoryContext()
+  } = useCategoryContext();
 
-  const selectedCategory = selected ?? globalCategory
+  const selectedCategory = selected ?? globalCategory;
+
   const handleClick = (cat) => {
     if (onSelect) {
-      onSelect(cat)
+      onSelect(cat);
     } else {
-      setGlobalCategory(cat)
+      setGlobalCategory(cat);
     }
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -32,8 +39,8 @@ export function CategoryList({ selected, onSelect }) {
         contentContainerStyle={styles.scrollContainer}
       >
         {categories.map((cat) => {
-          const iconName = cat.iconName || 'layers'
-          const isSelected = selectedCategory?.name === cat.name
+          const iconName = cat.iconName || "layers";
+          const isSelected = selectedCategory?.name === cat.name;
 
           return (
             <TouchableOpacity
@@ -48,8 +55,8 @@ export function CategoryList({ selected, onSelect }) {
               <View style={styles.categoryContent}>
                 <Feather
                   name={iconName}
-                  size={18}
-                  color={cat.color || 'black'}
+                  size={responsiveSize(18)}
+                  color={cat.color || "black"}
                 />
                 <Text
                   style={[
@@ -61,53 +68,53 @@ export function CategoryList({ selected, onSelect }) {
                 </Text>
               </View>
             </TouchableOpacity>
-          )
+          );
         })}
       </ScrollView>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
-    maxWidth: '100%',
-    paddingVertical: 4,
+    maxWidth: "100%",
+    paddingVertical: responsiveVertical(4),
   },
   scrollContainer: {
-    paddingHorizontal: 8,
+    paddingHorizontal: responsiveSize(8),
   },
   categoryItem: {
-    minWidth: 70,
-    height: 45,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    marginRight: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
+    minWidth: responsiveSize(70),
+    height: responsiveSize(45),
+    paddingVertical: responsiveVertical(8),
+    paddingHorizontal: responsiveSize(12),
+    borderRadius: responsiveSize(8),
+    marginRight: responsiveSize(8),
+    justifyContent: "center",
+    alignItems: "center",
   },
   selectedItem: {
-    borderColor: 'black',
-    backgroundColor: '#000000',
+    borderColor: "black",
+    backgroundColor: "#000000",
   },
   unselectedItem: {
-    backgroundColor: '#f2f2f2',
-    borderColor: '#fff',
+    backgroundColor: "#f2f2f2",
+    borderColor: "#fff",
   },
   categoryContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: responsiveSize(4),
   },
   categoryText: {
-    fontSize: 20,
-    letterSpacing: 1,
-    fontFamily: 'Geo_400Regular',
+    fontSize: responsiveFont(20),
+    letterSpacing: responsiveSize(1),
+    fontFamily: "Geo_400Regular",
   },
   selectedText: {
-    color: 'white',
+    color: "white",
   },
   unselectedText: {
-    color: 'black',
+    color: "black",
   },
-})
+});

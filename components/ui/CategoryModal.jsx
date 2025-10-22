@@ -1,93 +1,119 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef } from "react";
 import {
   View,
-  Image,
   Text,
   TextInput,
+  Image,
   TouchableOpacity,
   ImageBackground,
   StyleSheet,
   Dimensions,
   Animated,
-  Easing,
-} from 'react-native'
-import { Shadow } from 'react-native-shadow-2'
-import { AntDesign, Entypo, Feather } from '@expo/vector-icons'
-import { CustomModal } from './CustomModal'
-import { CustomButton } from './CustomButton' // ✅ Importamos el nuevo botón
-import { iconList } from '../../utils/icons'
-import { useUIContext } from '../../context/UIContext'
-import { useCategoryContext } from '../../context/CategoryContext'
-
-const { width } = Dimensions.get('window')
-const guidelineBaseWidth = 375
-const responsiveSize = (size) => (width / guidelineBaseWidth) * size
-
-const icons = iconList
+  FlatList,
+  Pressable,
+} from "react-native";
+import { Shadow } from "react-native-shadow-2";
+import { AntDesign, Entypo, Feather } from "@expo/vector-icons";
+import { CustomModal } from "./CustomModal";
+import { CustomButton } from "./CustomButton";
+import { iconList } from "../../utils/icons";
+import { useUIContext } from "../../context/UIContext";
+import { useCategoryContext } from "../../context/CategoryContext";
+import {
+  responsiveSize,
+  responsiveVertical,
+  responsiveFont,
+} from "../../utils/responsive";
 
 export function CategoryModal() {
   const { addCategory, categories, updateCategory, deleteCategory } =
-    useCategoryContext()
+    useCategoryContext();
   const {
     modals,
     toggleModal,
     selectedCategory,
     setSelectedCategory,
     switchModal,
-  } = useUIContext()
+  } = useUIContext();
 
-  const [newCategory, setNewCategory] = useState('')
-  const [selectedColor, setSelectedColor] = useState('#3b82f6')
-  const [selectedIcon, setSelectedIcon] = useState('')
-  const [iconError, setIconError] = useState(false)
-  const [showIconError, setShowIconError] = useState(false)
+  const [newCategory, setNewCategory] = useState("");
+  const [selectedColor, setSelectedColor] = useState("#3b82f6");
+  const [selectedIcon, setSelectedIcon] = useState("");
+  const [iconError, setIconError] = useState(false);
 
-  const iconErrorOpacity = useRef(new Animated.Value(0)).current
+  // Popups
+  const [showColors, setShowColors] = useState(false);
+  const [showIcons, setShowIcons] = useState(false);
+  const colorAnim = useRef(new Animated.Value(0)).current;
+  const iconAnim = useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    if (iconError) {
-      setShowIconError(true)
-      Animated.timing(iconErrorOpacity, {
-        toValue: 1,
-        duration: 200,
-        easing: Easing.ease,
-        useNativeDriver: true,
-      }).start()
-    } else {
-      Animated.timing(iconErrorOpacity, {
-        toValue: 0,
-        duration: 200,
-        easing: Easing.ease,
-        useNativeDriver: true,
-      }).start(() => setShowIconError(false))
+  const colors = [
+    "#3b82f6",
+    "#22c55e",
+    "#ef4444",
+    "#eab308",
+    "#a855f7",
+    "#0ea5e9",
+    "#f97316",
+    "#10b981",
+    "#6366f1",
+    "#f24ace",
+  ];
+
+  const togglePopup = (type) => {
+    if (type === "color") {
+      const isOpening = !showColors;
+      setShowIcons(false); // cerrar icon popup si está abierto
+      if (isOpening) {
+        colorAnim.setValue(0); // reinicia animación
+        setShowColors(true);
+      }
+      animatePopup(colorAnim, isOpening);
+    } else if (type === "icon") {
+      const isOpening = !showIcons;
+      setShowColors(false); // cerrar color popup si está abierto
+      if (isOpening) {
+        iconAnim.setValue(0); // reinicia animación
+        setShowIcons(true);
+      }
+      animatePopup(iconAnim, isOpening);
     }
-  }, [iconError])
+  };
 
-  useEffect(() => {
-    if (!selectedCategory) return
-    const updated = categories.find((cat) => cat.id === selectedCategory.id)
-    if (updated) setSelectedCategory(updated)
-  }, [categories])
+  const animatePopup = (animRef, open) => {
+    Animated.timing(animRef, {
+      toValue: open ? 1 : 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start(() => {
+      if (!open) {
+        requestAnimationFrame(() => {
+          if (animRef === colorAnim) setShowColors(false);
+          if (animRef === iconAnim) setShowIcons(false);
+        });
+      }
+    });
+  };
 
   useEffect(() => {
     if (selectedCategory) {
-      setNewCategory(selectedCategory.name)
-      setSelectedColor(selectedCategory.color)
-      setSelectedIcon(selectedCategory.iconName)
-      setIconError(false)
+      setNewCategory(selectedCategory.name);
+      setSelectedColor(selectedCategory.color);
+      setSelectedIcon(selectedCategory.iconName);
+      setIconError(false);
     } else {
-      setNewCategory('')
-      setSelectedColor('#3b82f6')
-      setSelectedIcon('')
-      setIconError(false)
+      setNewCategory("");
+      setSelectedColor("#3b82f6");
+      setSelectedIcon("");
+      setIconError(false);
     }
-  }, [selectedCategory])
+  }, [selectedCategory]);
 
   const handleCategory = () => {
-    if (newCategory.trim() === '') return
-    if (!selectedIcon || selectedIcon.trim() === '') {
-      setIconError(true)
-      return
+    if (newCategory.trim() === "") return;
+    if (!selectedIcon) {
+      setIconError(true);
+      return;
     }
 
     if (selectedCategory) {
@@ -96,66 +122,48 @@ export function CategoryModal() {
         name: newCategory,
         color: selectedColor,
         iconName: selectedIcon,
-      }
-      updateCategory(updatedCat)
-      setSelectedCategory(updatedCat)
-      switchModal('category', 'categories')
+      };
+      updateCategory(updatedCat);
+      setSelectedCategory(updatedCat);
+      switchModal("category", "categories");
     } else {
       const newCat = {
         name: newCategory,
         color: selectedColor,
         iconName: selectedIcon,
-      }
-      addCategory(newCat)
-      switchModal('category', 'addTask')
+      };
+      addCategory(newCat);
+      switchModal("category", "addTask");
     }
 
-    setNewCategory('')
-    setSelectedColor('#3b82f6')
-    setSelectedIcon('')
-    setSelectedCategory(null)
-    setIconError(false)
-  }
+    setNewCategory("");
+    setSelectedColor("#3b82f6");
+    setSelectedIcon("");
+    setSelectedCategory(null);
+    setIconError(false);
+  };
 
   const handleDelete = () => {
-    if (!selectedCategory) return
-    deleteCategory(selectedCategory.id)
-    switchModal('category', 'categories')
-  }
-
-  const handleKeyPress = ({ nativeEvent }) => {
-    if (nativeEvent.key === 'Enter') handleCategory()
-  }
-
-  const colors = [
-    '#3b82f6',
-    '#22c55e',
-    '#ef4444',
-    '#eab308',
-    '#a855f7',
-    '#0ea5e9',
-    '#f97316',
-    '#10b981',
-    '#6366f1',
-    '#f24ace',
-  ]
+    if (!selectedCategory) return;
+    deleteCategory(selectedCategory.id);
+    switchModal("category", "categories");
+  };
 
   return (
     <CustomModal
       modalName="category"
       isOpen={modals?.category?.isOpen || false}
       onClose={() => {
-        toggleModal('category')
-        setSelectedCategory(null)
-        setNewCategory('')
-        setSelectedColor('#3b82f6')
-        setSelectedIcon('')
-        setIconError(false)
+        toggleModal("category");
+        setSelectedCategory(null);
+        setNewCategory("");
+        setSelectedColor("#3b82f6");
+        setSelectedIcon("");
+        setIconError(false);
       }}
       title="Categoría"
     >
       <View style={styles.container}>
-        {/* --- Nombre --- */}
         <Text style={styles.label}>Nombre</Text>
         <Shadow
           distance={3}
@@ -166,7 +174,7 @@ export function CategoryModal() {
           containerViewStyle={{ marginBottom: responsiveSize(20) }}
         >
           <ImageBackground
-            source={require('../../assets/notebook.jpg')}
+            source={require("../../assets/notebook.jpg")}
             style={styles.inputBackground}
             imageStyle={{ borderRadius: responsiveSize(10) }}
           >
@@ -177,78 +185,134 @@ export function CategoryModal() {
               value={newCategory}
               maxLength={10}
               onChangeText={setNewCategory}
-              onKeyPress={handleKeyPress}
               returnKeyType="done"
             />
           </ImageBackground>
         </Shadow>
 
-        {/* --- Colores --- */}
-        <Text style={styles.label}>Elige un color</Text>
-        <View style={styles.colorContainer}>
-          {colors.map((color) => (
+        {/* --- Selector Color e Icono --- */}
+        <View style={styles.selectorRow}>
+          {/* Selector Color */}
+          <View style={styles.selectorContainer}>
+            <Text style={styles.label}>Color</Text>
             <TouchableOpacity
-              key={color}
-              style={[
-                styles.colorCircle,
-                { backgroundColor: color },
-                selectedColor === color && styles.colorSelected,
-              ]}
-              onPress={() => setSelectedColor(color)}
+              style={[styles.colorButton, { backgroundColor: selectedColor }]}
+              onPress={() => togglePopup("color")}
             />
-          ))}
-        </View>
-
-        {/* --- Error de ícono --- */}
-        {showIconError && (
-          <Animated.View
-            style={{
-              opacity: iconErrorOpacity,
-              marginTop: responsiveSize(20),
-              alignItems: 'center',
-            }}
-          >
-            <Shadow distance={5} startColor="#ab0000" offset={[0, 3]}>
-              <View
+            {showColors && (
+              <Animated.View
                 style={{
-                  backgroundColor: '#ab0000',
-                  borderRadius: 6,
-                  paddingHorizontal: responsiveSize(12),
-                  paddingVertical: responsiveSize(6),
+                  width: responsiveSize(195),
+                  position: "absolute",
+                  top: responsiveSize(105),
+                  left: responsiveSize(-51),
+                  zIndex: 50,
+                  backgroundColor: "#000",
+                  padding: responsiveSize(2),
+                  borderRadius: responsiveSize(10),
+                  transform: [
+                    {
+                      scale: colorAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0.8, 1],
+                      }),
+                    },
+                  ],
+                  opacity: colorAnim,
                 }}
               >
-                <Text style={styles.iconErrorText}>
-                  Por favor elige un ícono
-                </Text>
-              </View>
-            </Shadow>
-          </Animated.View>
-        )}
+                <FlatList
+                  data={colors}
+                  keyExtractor={(item) => item}
+                  numColumns={5}
+                  renderItem={({ item }) => (
+                    <Pressable
+                      style={[styles.colorOption, { backgroundColor: item }]}
+                      onPress={() => {
+                        setSelectedColor(item);
+                        animatePopup(colorAnim, false);
+                      }}
+                    />
+                  )}
+                />
+              </Animated.View>
+            )}
+          </View>
 
-        {/* --- Íconos --- */}
-        <Text style={styles.label}>Elige un ícono</Text>
-        <View style={styles.iconsContainer}>
-          {icons.map(({ name, component: IconComponent }) => {
-            const Icon = IconComponent
-            return (
-              <TouchableOpacity
-                key={name}
-                style={[
-                  styles.iconBox,
-                  selectedIcon === name && styles.iconSelected,
-                ]}
-                onPress={() => {
-                  setSelectedIcon(name)
-                  setIconError(false)
+          {/* Selector Icono */}
+          <View style={styles.selectorContainer}>
+            <Text style={styles.label}>Ícono</Text>
+            <TouchableOpacity
+              style={styles.iconButton}
+              onPress={() => togglePopup("icon")}
+            >
+              {selectedIcon ? (
+                (() => {
+                  const IconComp = iconList.find(
+                    (i) => i.name === selectedIcon
+                  )?.component;
+                  return IconComp ? (
+                    <IconComp size={responsiveSize(28)} color="#fff" />
+                  ) : (
+                    <Feather
+                      name="help-circle"
+                      size={responsiveSize(28)}
+                      color="#fff"
+                    />
+                  );
+                })()
+              ) : (
+                <Feather name="plus" size={responsiveSize(28)} color="#fff" />
+              )}
+            </TouchableOpacity>
+            {showIcons && (
+              <Animated.View
+                style={{
+                  width: responsiveSize(222),
+                  position: "absolute",
+                  top: responsiveSize(105),
+                  left: responsiveSize(-50),
+                  zIndex: 50,
+                  backgroundColor: "#000",
+                  padding: responsiveSize(2),
+                  borderRadius: responsiveSize(10),
+                  transform: [
+                    {
+                      scale: iconAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0.8, 1],
+                      }),
+                    },
+                  ],
+                  opacity: iconAnim,
                 }}
               >
-                <Icon size={responsiveSize(26)} />
-              </TouchableOpacity>
-            )
-          })}
+                <FlatList
+                  data={iconList}
+                  keyExtractor={(item) => item.name}
+                  numColumns={5}
+                  renderItem={({ item }) => {
+                    const IconComp = item.component;
+                    return (
+                      <Pressable
+                        style={styles.iconOption}
+                        onPress={() => {
+                          setSelectedIcon(item.name);
+                          animatePopup(iconAnim, false);
+                          setIconError(false);
+                        }}
+                      >
+                        <IconComp size={responsiveSize(23)} color="#fff" />
+                      </Pressable>
+                    );
+                  }}
+                />
+              </Animated.View>
+            )}
+          </View>
         </View>
 
-        {/* --- Botones (usando CustomButton) --- */}
+        {/* --- Botones --- */}
         <View style={styles.buttonsContainer}>
           {selectedCategory && (
             <CustomButton
@@ -263,7 +327,6 @@ export function CategoryModal() {
               onPress={handleDelete}
             />
           )}
-
           <CustomButton
             icon={
               selectedCategory ? (
@@ -280,119 +343,130 @@ export function CategoryModal() {
             onPress={handleCategory}
           />
         </View>
-      </View>
 
-      {/* --- Imágenes decorativas --- */}
-      <Image
-        source={require('../../assets/flower.png')}
-        style={styles.flowerImage}
-        resizeMode="contain"
-      />
-      <Image
-        source={require('../../assets/cloud.png')}
-        style={styles.cloudImage}
-        resizeMode="contain"
-      />
-      <Image
-        source={require('../../assets/gatito5.png')}
-        style={styles.catImage}
-        resizeMode="contain"
-      />
+        {/* Imágenes decorativas */}
+        <Image
+          source={require("../../assets/camp.png")}
+          style={styles.camp}
+          resizeMode="contain"
+        />
+        <Image
+          source={require("../../assets/cloud.png")}
+          style={[styles.cloudImage, { left: responsiveSize(-40) }]}
+        />
+        <Image
+          source={require("../../assets/cloud.png")}
+          style={[styles.cloudImage, { right: responsiveSize(-40) }]}
+        />
+        <Image
+          source={require("../../assets/airplane1.png")}
+          style={[styles.airplane1]}
+        />
+        <Image
+          source={require("../../assets/hornet.png")}
+          style={styles.hornet}
+          resizeMode="contain"
+        />
+      </View>
     </CustomModal>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
-  container: { alignItems: 'center' },
+  container: { alignItems: "center" },
   label: {
     fontSize: responsiveSize(30),
     marginVertical: responsiveSize(14),
-    textAlign: 'center',
-    fontFamily: 'Geo_400Regular',
-  },
-  iconErrorText: {
-    color: '#fff',
-    fontSize: responsiveSize(20),
-    textAlign: 'center',
-    fontFamily: 'Geo_400Regular',
+    textAlign: "center",
+    fontFamily: "Geo_400Regular",
   },
   inputBackground: {
-    width: width * 0.6,
+    width: responsiveSize(260),
     height: responsiveSize(50),
     borderRadius: responsiveSize(10),
-    borderWidth: responsiveSize(2.5),
-    marginBottom: responsiveSize(10),
-    overflow: 'hidden',
+    overflow: "hidden",
+    borderWidth: 2,
+    zIndex: 5,
   },
   textInput: {
     flex: 1,
     paddingHorizontal: responsiveSize(15),
     fontSize: responsiveSize(25),
-    fontFamily: 'Geo_400Regular',
-    textAlign: 'center',
-    backgroundColor: 'transparent',
-    color: '#000',
+    fontFamily: "Geo_400Regular",
+    textAlign: "center",
+    color: "#000",
+    backgroundColor: "transparent",
   },
-  colorContainer: {
-    width: '90%',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: responsiveSize(18),
+  selectorRow: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: responsiveSize(20),
   },
-  colorCircle: {
-    width: responsiveSize(29),
-    height: responsiveSize(29),
+  selectorContainer: {
+    alignItems: "center",
+    width: responsiveSize(120),
+    position: "relative",
+  },
+  colorButton: {
+    width: responsiveSize(45),
+    height: responsiveSize(45),
     borderRadius: responsiveSize(10),
-    borderWidth: responsiveSize(3),
-    borderColor: 'transparent',
   },
-  colorSelected: { borderColor: 'black' },
-  iconsContainer: {
-    width: '90%',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    gap: responsiveSize(20),
-  },
-  iconBox: {
+  colorOption: {
     width: responsiveSize(30),
     height: responsiveSize(30),
-    borderRadius: responsiveSize(8),
-    borderBottomWidth: responsiveSize(3),
-    opacity: 0.4,
-    borderColor: 'transparent',
-    justifyContent: 'center',
-    alignItems: 'center',
+    borderRadius: responsiveSize(6),
+    margin: responsiveSize(4),
   },
-  iconSelected: { borderColor: 'black', opacity: 1 },
+  iconButton: {
+    width: responsiveSize(70),
+    height: responsiveSize(45),
+    borderRadius: responsiveSize(12),
+    backgroundColor: "#000",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  iconOption: {
+    width: responsiveSize(35),
+    height: responsiveSize(35),
+    margin: responsiveSize(4),
+    justifyContent: "center",
+    alignItems: "center",
+  },
   buttonsContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: responsiveSize(15),
     marginTop: responsiveSize(50),
   },
-  flowerImage: {
-    width: responsiveSize(100),
-    height: responsiveSize(120),
-    alignSelf: 'center',
-    position: 'absolute',
-    bottom: responsiveSize(90),
-    right: responsiveSize(-12),
+  camp: {
+    width: responsiveSize(300),
+    height: responsiveVertical(300),
+    alignSelf: "center",
+    position: "absolute",
+    right: responsiveSize(-25),
+    bottom: responsiveVertical(-260),
   },
   cloudImage: {
-    width: responsiveSize(100),
-    height: responsiveSize(120),
-    alignSelf: 'center',
-    position: 'absolute',
-    bottom: responsiveSize(50),
-    left: responsiveSize(16),
+    width: responsiveSize(105),
+    height: responsiveVertical(60),
+    top: responsiveVertical(210),
+    alignSelf: "center",
+    position: "absolute",
   },
-  catImage: {
-    width: responsiveSize(80),
-    height: responsiveSize(80),
-    alignSelf: 'center',
-    position: 'absolute',
-    top: responsiveSize(-10),
-    left: responsiveSize(15),
+  airplane1: {
+    width: responsiveSize(115),
+    height: responsiveVertical(120),
+    top: responsiveVertical(-10),
+    right: responsiveSize(-60),
+    alignSelf: "center",
+    position: "absolute",
   },
-})
+  hornet: {
+    width: responsiveSize(60),
+    height: responsiveVertical(60),
+    alignSelf: "center",
+    position: "absolute",
+    top: responsiveVertical(-3),
+    left: responsiveSize(-25),
+  },
+});

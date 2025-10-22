@@ -8,7 +8,7 @@ import { EmptyState } from "./EmptyState";
 
 export function TaskList() {
   const { tasks, toggleCompleted, setSelectedTask } = useTaskContext();
-  const { showCompleted, toggleModal } = useUIContext();
+  const { toggleModal } = useUIContext();
   const { category } = useCategoryContext();
 
   const [recentlyCompleted, setRecentlyCompleted] = useState(null);
@@ -26,17 +26,14 @@ export function TaskList() {
 
   const isAllCategory = category.name.toLowerCase().trim() === "todas";
 
-  const filteredTasksByCategory = isAllCategory
+  // Filtrado solo por categoría, sin ocultar tareas completadas
+  const filteredTasks = isAllCategory
     ? tasks
     : tasks.filter(
         (task) =>
           task.category?.name?.toLowerCase().trim() ===
           category.name.toLowerCase().trim()
       );
-
-  const filteredTasks = showCompleted
-    ? filteredTasksByCategory
-    : filteredTasksByCategory.filter((task) => !task.completed);
 
   const handleToggleCompleted = (task) => {
     const isAlreadyCompleted = task.completed;
@@ -98,7 +95,6 @@ export function TaskList() {
               setSelectedTask={setSelectedTask}
               toggleModal={toggleModal}
               clickTimeoutRef={clickTimeoutRef}
-              showCompleted={showCompleted}
               hasMounted={hasMounted}
             />
           ))}
