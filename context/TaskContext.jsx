@@ -23,7 +23,7 @@ export function TaskProvider({ children }) {
       text: text.trim(),
       category: { id, name, iconName, color },
       completed: false,
-      createAt: new Date().toISOString(),
+      createAt: Date.now(),
     };
 
     const updatedTasks = [...tasks, newTask];
@@ -96,7 +96,12 @@ export function TaskProvider({ children }) {
         if (savedTasks) {
           const parsed = JSON.parse(savedTasks);
           if (Array.isArray(parsed)) {
-            setTasks(parsed);
+            const normalized = parsed.map((t) => ({
+              ...t,
+              createdAt: t.createdAt || t.createAt || Date.now(),
+            }));
+            setTasks(normalized);
+            await AsyncStorage.setItem("tasks", JSON.stringify(normalized)); // actualiza almacenamiento
           } else {
             console.warn("⚠️ Tareas guardadas no son válidas:", parsed);
           }

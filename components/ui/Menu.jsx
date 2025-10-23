@@ -6,11 +6,14 @@ import {
   StyleSheet,
   Pressable,
   Animated,
+  Dimensions,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useUIContext } from "../../context/UIContext";
 import { Shadow } from "react-native-shadow-2";
 import { responsiveSize, responsiveVertical } from "../../utils/responsive";
+
+const { width, height } = Dimensions.get("window");
 
 export function Menu() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -24,14 +27,12 @@ export function Menu() {
   const handleToggleMenu = () => {
     const opening = !isMenuOpen;
 
-    // Animación del ícono
     Animated.timing(rotateAnim, {
       toValue: opening ? 1 : 0,
       duration: 250,
       useNativeDriver: true,
     }).start();
 
-    // Animación del menú
     Animated.parallel([
       Animated.timing(slideY, {
         toValue: opening ? 0 : responsiveVertical(-40),
@@ -50,7 +51,6 @@ export function Menu() {
       }),
     ]).start();
 
-    // Actualizamos solo el estado de interacción después de la animación
     setIsMenuOpen(opening);
   };
 
@@ -60,27 +60,32 @@ export function Menu() {
   });
 
   return (
-    <View style={{ position: "relative", zIndex: 100 }}>
-      {/* Botón de menú */}
-      <Shadow
-        distance={5}
-        startColor="#000"
-        offset={[0, responsiveVertical(1)]}
-      >
-        <Pressable onPress={handleToggleMenu}>
-          <Animated.View
-            style={{ transform: [{ rotate: rotateInterpolation }] }}
-          >
-            <Feather
-              name="more-vertical"
-              size={responsiveSize(38)}
-              color="white"
-            />
-          </Animated.View>
-        </Pressable>
-      </Shadow>
+    <>
+      <View style={{ position: "relative", zIndex: 1 }}>
+        <Shadow
+          distance={5}
+          startColor="#000"
+          offset={[0, responsiveVertical(1)]}
+        >
+          <Pressable onPress={handleToggleMenu}>
+            <Animated.View
+              style={{ transform: [{ rotate: rotateInterpolation }] }}
+            >
+              <Feather
+                name="more-vertical"
+                size={responsiveSize(38)}
+                color="white"
+              />
+            </Animated.View>
+          </Pressable>
+        </Shadow>
+      </View>
 
-      {/* Menú flotante */}
+      {/* 🔹 Cerrar al tocar fuera (sin cambiar diseño) */}
+      {isMenuOpen && (
+        <Pressable style={styles.backdrop} onPress={handleToggleMenu} />
+      )}
+
       <Animated.View
         style={[
           styles.menu,
@@ -91,14 +96,6 @@ export function Menu() {
           },
         ]}
       >
-        {/* Fondo para cerrar al tocar fuera */}
-        {isMenuOpen && (
-          <Pressable
-            style={StyleSheet.absoluteFill}
-            onPress={handleToggleMenu}
-          />
-        )}
-
         <Shadow
           distance={5}
           startColor="#000"
@@ -131,16 +128,25 @@ export function Menu() {
           </TouchableOpacity>
         </Shadow>
       </Animated.View>
-    </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
+  backdrop: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width,
+    height,
+    backgroundColor: "transparent",
+    zIndex: 999,
+  },
   menu: {
     width: responsiveSize(220),
     position: "absolute",
     top: responsiveVertical(70),
-    zIndex: 100,
+    zIndex: 1000,
     flexDirection: "column",
     alignItems: "flex-start",
   },

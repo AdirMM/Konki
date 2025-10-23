@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   ImageBackground,
   StyleSheet,
-  Dimensions,
   Animated,
   FlatList,
   Pressable,
@@ -19,15 +18,10 @@ import { CustomButton } from "./CustomButton";
 import { iconList } from "../../utils/icons";
 import { useUIContext } from "../../context/UIContext";
 import { useCategoryContext } from "../../context/CategoryContext";
-import {
-  responsiveSize,
-  responsiveVertical,
-  responsiveFont,
-} from "../../utils/responsive";
+import { responsiveSize, responsiveVertical } from "../../utils/responsive";
 
 export function CategoryModal() {
-  const { addCategory, categories, updateCategory, deleteCategory } =
-    useCategoryContext();
+  const { addCategory, updateCategory, deleteCategory } = useCategoryContext();
   const {
     modals,
     toggleModal,
@@ -201,6 +195,7 @@ export function CategoryModal() {
             />
             {showColors && (
               <Animated.View
+                pointerEvents={showColors ? "auto" : "none"}
                 style={{
                   width: responsiveSize(195),
                   position: "absolute",
@@ -267,6 +262,7 @@ export function CategoryModal() {
             </TouchableOpacity>
             {showIcons && (
               <Animated.View
+                pointerEvents={showIcons ? "auto" : "none"}
                 style={{
                   width: responsiveSize(222),
                   position: "absolute",
@@ -367,6 +363,11 @@ export function CategoryModal() {
           style={styles.hornet}
           resizeMode="contain"
         />
+        <Image
+          source={require("../../assets/globe.png")}
+          style={styles.globe}
+          resizeMode="contain"
+        />
       </View>
     </CustomModal>
   );
@@ -440,11 +441,11 @@ const styles = StyleSheet.create({
   },
   camp: {
     width: responsiveSize(300),
-    height: responsiveVertical(300),
+    height: responsiveVertical(230),
     alignSelf: "center",
     position: "absolute",
     right: responsiveSize(-25),
-    bottom: responsiveVertical(-260),
+    bottom: responsiveVertical(-240),
   },
   cloudImage: {
     width: responsiveSize(105),
@@ -466,7 +467,14 @@ const styles = StyleSheet.create({
     height: responsiveVertical(60),
     alignSelf: "center",
     position: "absolute",
-    top: responsiveVertical(-3),
     left: responsiveSize(-25),
+  },
+  globe: {
+    width: responsiveSize(60),
+    height: responsiveVertical(60),
+    alignSelf: "center",
+    position: "absolute",
+    top: responsiveSize(-52),
+    left: responsiveSize(5),
   },
 });

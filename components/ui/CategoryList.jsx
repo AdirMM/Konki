@@ -6,8 +6,10 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import { Feather, FontAwesome } from "@expo/vector-icons";
 import { useCategoryContext } from "../../context/CategoryContext";
+import { iconMap } from "../../utils/icons";
+
 import {
   responsiveSize,
   responsiveVertical,
@@ -31,6 +33,15 @@ export function CategoryList({ selected, onSelect }) {
     }
   };
 
+  // Función para renderizar el ícono según la librería
+  const renderIcon = (cat) => {
+    const IconComponent = iconMap[cat.iconName];
+    if (!IconComponent) return null; // Si no existe el icono
+    return (
+      <IconComponent size={responsiveSize(18)} color={cat.color || "black"} />
+    );
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -39,8 +50,7 @@ export function CategoryList({ selected, onSelect }) {
         contentContainerStyle={styles.scrollContainer}
       >
         {categories.map((cat) => {
-          const iconName = cat.iconName || "layers";
-          const isSelected = selectedCategory?.name === cat.name;
+          const isSelected = selectedCategory?.id === cat.id; // <-- Cambio aquí
 
           return (
             <TouchableOpacity
@@ -53,11 +63,7 @@ export function CategoryList({ selected, onSelect }) {
               activeOpacity={0.7}
             >
               <View style={styles.categoryContent}>
-                <Feather
-                  name={iconName}
-                  size={responsiveSize(18)}
-                  color={cat.color || "black"}
-                />
+                {renderIcon(cat)}
                 <Text
                   style={[
                     styles.categoryText,

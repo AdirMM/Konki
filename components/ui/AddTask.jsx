@@ -147,6 +147,11 @@ export function AddTask() {
         resizeMode="contain"
       />
       <Image
+        source={require("../../assets/globe.png")}
+        style={styles.globe}
+        resizeMode="contain"
+      />
+      <Image
         source={require("../../assets/spider.png")}
         style={styles.spider}
         resizeMode="contain"
@@ -179,8 +184,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: responsiveSize(10),
     fontFamily: "Geo_400Regular",
-    fontSize: responsiveFont(20),
-    letterSpacing: 1.2,
+    fontSize: responsiveFont(29),
     textAlignVertical: "top",
     backgroundColor: "transparent",
     color: "#000",
@@ -226,6 +230,14 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     position: "absolute",
     bottom: responsiveVertical(90),
+    left: responsiveSize(5),
+  },
+  globe: {
+    width: responsiveSize(80),
+    height: responsiveVertical(80),
+    alignSelf: "center",
+    position: "absolute",
+    top: responsiveVertical(-42),
     left: responsiveSize(5),
   },
   spider: {

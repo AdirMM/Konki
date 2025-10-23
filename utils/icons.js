@@ -1,5 +1,4 @@
-import { Feather } from "@expo/vector-icons";
-import { FontAwesome } from "@expo/vector-icons";
+import { Feather, FontAwesome } from "@expo/vector-icons";
 
 export const iconMap = {
   home: (props) => <Feather name="home" {...props} />, // Hogar
@@ -17,7 +16,6 @@ export const iconMap = {
   gift: (props) => <Feather name="gift" {...props} />, // Regalos / celebraciones
   code: (props) => <FontAwesome name="code" {...props} />,
   music: (props) => <FontAwesome name="music" {...props} />,
-  car: (props) => <FontAwesome name="car" {...props} />,
   search: (props) => <FontAwesome name="search" {...props} />,
 };
 

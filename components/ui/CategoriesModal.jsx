@@ -9,12 +9,13 @@ import {
   Animated,
   Dimensions,
 } from "react-native";
+import { Feather } from "@expo/vector-icons"; // Solo para las flechas
 import { useUIContext } from "../../context/UIContext";
 import { useCategoryContext } from "../../context/CategoryContext";
 import { CustomModal } from "./CustomModal";
-import { Feather } from "@expo/vector-icons";
 import { Shadow } from "react-native-shadow-2";
 import { responsiveSize, responsiveVertical } from "../../utils/responsive";
+import { iconMap } from "../../utils/icons";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const columns = 2;
@@ -78,6 +79,14 @@ export function CategoriesModal() {
     }
   };
 
+  const renderIcon = (cat) => {
+    const IconComponent = iconMap[cat.iconName];
+    if (!IconComponent) return null;
+    return (
+      <IconComponent size={responsiveSize(20)} color={cat.color || "#fff"} />
+    );
+  };
+
   const styles = createStyles(itemWidth);
 
   return (
@@ -104,7 +113,7 @@ export function CategoriesModal() {
             .filter((cat) => cat.id !== "todas")
             .slice(1)
             .map((cat, index) => {
-              const isDisabled = index < 4; // primeras 4 categorías deshabilitadas
+              const isDisabled = index < 4;
               return (
                 <View key={cat.id} style={{ width: itemWidth }}>
                   <Shadow
@@ -115,18 +124,14 @@ export function CategoriesModal() {
                   >
                     <TouchableOpacity
                       onPress={() => !isDisabled && handleClick(cat)}
-                      activeOpacity={isDisabled ? 0.5 : 1} // si está deshabilitada no hace efecto al presionar
+                      activeOpacity={isDisabled ? 0.5 : 1}
                       style={[
                         styles.categoryItem,
                         { flex: 1, opacity: isDisabled ? 0.5 : 1 },
                       ]}
                     >
                       <View style={styles.buttonContent}>
-                        <Feather
-                          name={cat.iconName || "layers"}
-                          size={responsiveSize(20)}
-                          color={cat.color}
-                        />
+                        {renderIcon(cat)}
                         <Text style={styles.categoryText}>{cat.name}</Text>
                       </View>
                     </TouchableOpacity>
@@ -218,6 +223,18 @@ export function CategoriesModal() {
           position: "absolute",
           bottom: responsiveVertical(300),
           left: responsiveSize(240),
+        }}
+        resizeMode="contain"
+      />
+      <Image
+        source={require("../../assets/globe.png")}
+        style={{
+          width: responsiveSize(65),
+          height: responsiveSize(65),
+          alignSelf: "center",
+          position: "absolute",
+          top: responsiveVertical(-50),
+          left: responsiveSize(45),
         }}
         resizeMode="contain"
       />

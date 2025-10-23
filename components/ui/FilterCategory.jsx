@@ -1,5 +1,5 @@
-import { Ionicons, Feather } from '@expo/vector-icons'
-import { useState, useRef } from 'react'
+import { Ionicons, Feather } from "@expo/vector-icons";
+import { useState, useRef } from "react";
 import {
   Pressable,
   Animated,
@@ -9,63 +9,68 @@ import {
   TouchableOpacity,
   FlatList,
   Dimensions,
-} from 'react-native'
-import { Shadow } from 'react-native-shadow-2'
-import { useCategoryContext } from '../../context/CategoryContext'
-import { useTaskContext } from '../../context/TaskContext'
-import { responsiveSize } from '../../utils/responsive' // <-- asegúrate de tener este helper
+} from "react-native";
+import { Shadow } from "react-native-shadow-2";
+import { useCategoryContext } from "../../context/CategoryContext";
+import { useTaskContext } from "../../context/TaskContext";
+import {
+  responsiveSize,
+  responsiveVertical,
+  responsiveFont,
+} from "../../utils/responsive";
 
-const { width, height } = Dimensions.get('window')
+const { width, height } = Dimensions.get("window");
 
 export function FilterCategory() {
-  const [showFilter, setShowFilter] = useState(false)
-  const animValue = useRef(new Animated.Value(0)).current
-  const { categories, setCategory } = useCategoryContext()
-  const { tasks } = useTaskContext()
+  const [showFilter, setShowFilter] = useState(false);
+  const animValue = useRef(new Animated.Value(0)).current;
+  const { categories, setCategory } = useCategoryContext();
+  const { tasks } = useTaskContext();
 
-  const hasTasks = tasks.length > 0
+  const hasTasks = tasks.length > 0;
 
   const handleToggle = () => {
-    const isOpening = !showFilter
-    setShowFilter(true)
+    const isOpening = !showFilter;
+    setShowFilter(true);
 
     Animated.timing(animValue, {
       toValue: isOpening ? 1 : 0,
-      duration: 300,
+      duration: 250,
       useNativeDriver: true,
     }).start(() => {
-      if (!isOpening) setShowFilter(false)
-    })
-  }
+      if (!isOpening) setShowFilter(false);
+    });
+  };
 
+  // Animaciones suaves y proporcionales al tamaño de pantalla
   const rotate = animValue.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0deg', '-90deg'],
-  })
+    outputRange: ["0deg", "-90deg"],
+  });
 
   const slideY = animValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [responsiveSize(-40), 0],
-  })
+    outputRange: [responsiveVertical(-50), 0],
+  });
 
   const slideX = animValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [responsiveSize(40), 0],
-  })
+    outputRange: [responsiveSize(50), 0],
+  });
 
   const opacity = animValue.interpolate({
     inputRange: [0, 1],
     outputRange: [0, 1],
-  })
+  });
 
   const handleSelectCategory = (cat) => {
-    if (tasks.length === 0 && cat.name !== 'Todas') return
-    setCategory(cat)
-    handleToggle()
-  }
+    if (!hasTasks && cat.name !== "Todas") return;
+    setCategory(cat);
+    handleToggle();
+  };
 
   const renderItem = ({ item }) => {
-    const isDisabled = tasks.length === 0 && item.name !== 'Todas'
+    const isDisabled = !hasTasks && item.name !== "Todas";
     return (
       <Shadow
         distance={responsiveSize(6)}
@@ -87,8 +92,8 @@ export function FilterCategory() {
           </View>
         </TouchableOpacity>
       </Shadow>
-    )
-  }
+    );
+  };
 
   return (
     <>
@@ -135,56 +140,56 @@ export function FilterCategory() {
         </>
       )}
     </>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
-  container: { position: 'relative', zIndex: 1 },
+  container: { position: "relative", zIndex: 1 },
   backdrop: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     width,
     height,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     zIndex: 999,
   },
   dropdown: {
-    position: 'absolute',
+    position: "absolute",
     top: height * 0.1,
     right: responsiveSize(-10),
     zIndex: 1000,
     maxHeight: height * 0.5,
     borderRadius: responsiveSize(12),
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   scrollContainer: {
     width: width * 0.45,
     borderRadius: responsiveSize(12),
   },
   scrollContent: {
-    alignItems: 'center',
-    paddingVertical: responsiveSize(20),
+    alignItems: "center",
+    paddingVertical: responsiveVertical(20),
   },
   menuButton: {
     width: width * 0.4,
-    height: responsiveSize(60),
-    justifyContent: 'center',
+    height: responsiveVertical(60),
+    justifyContent: "center",
     borderWidth: responsiveSize(2),
     borderRadius: responsiveSize(12),
-    marginBottom: responsiveSize(20),
+    marginBottom: responsiveVertical(20),
     paddingHorizontal: responsiveSize(18),
-    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+    backgroundColor: "rgba(0, 0, 0, 0.9)",
   },
   buttonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: responsiveSize(10),
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   buttonText: {
-    color: '#fff',
-    fontSize: responsiveSize(20),
-    fontFamily: 'Geo_400Regular_Italic',
+    color: "#fff",
+    fontSize: responsiveFont(18),
+    fontFamily: "Geo_400Regular_Italic",
   },
-})
+});

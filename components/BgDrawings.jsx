@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
   },
   hornet: {
     position: "absolute",
-    top: responsiveSize(90),
+    top: responsiveSize(92),
     right: responsiveSize(45),
     width: responsiveSize(100),
     height: responsiveSize(100),

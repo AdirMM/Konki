@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
     paddingVertical: responsiveSize(6),
     paddingHorizontal: responsiveSize(12),
     borderRadius: responsiveSize(100),
-    width: responsiveSize(70),
+    width: responsiveSize(73),
     height: responsiveSize(70),
     justifyContent: "center",
     alignItems: "center",

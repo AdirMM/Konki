@@ -150,8 +150,23 @@ export function EditTask() {
         style={[styles.cloudImage, { right: responsiveSize(-10) }]}
       />
       <Image
+        source={require("../../assets/globe.png")}
+        style={styles.globe}
+        resizeMode="contain"
+      />
+      <Image
+        source={require("../../assets/spiderman.png")}
+        style={styles.spiderman}
+        resizeMode="contain"
+      />
+      <Image
         source={require("../../assets/airplane1.png")}
         style={styles.airplane}
+        resizeMode="contain"
+      />
+      <Image
+        source={require("../../assets/shark.png")}
+        style={styles.shark}
         resizeMode="contain"
       />
       <Image
@@ -187,7 +202,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: responsiveSize(10),
     fontSize: responsiveSize(29),
-    letterSpacing: 1.2,
     textAlignVertical: "top",
     backgroundColor: "transparent",
     color: "#000",
@@ -230,18 +244,39 @@ const styles = StyleSheet.create({
     paddingVertical: responsiveSize(11),
     borderRadius: responsiveSize(20),
   },
-  airplane: {
+  globe: {
+    width: responsiveSize(80),
+    height: responsiveSize(80),
+    position: "absolute",
+    top: responsiveSize(-57),
+    left: responsiveSize(25),
+  },
+  spiderman: {
     width: responsiveSize(60),
     height: responsiveSize(60),
     position: "absolute",
-    bottom: responsiveSize(110),
+    top: responsiveSize(-38),
+    right: responsiveSize(0),
+  },
+  airplane: {
+    width: responsiveSize(100),
+    height: responsiveSize(100),
+    position: "absolute",
+    bottom: responsiveSize(130),
+    left: responsiveSize(-10),
+  },
+  shark: {
+    width: responsiveSize(80),
+    height: responsiveSize(80),
+    position: "absolute",
+    bottom: responsiveSize(40),
     left: responsiveSize(60),
   },
   beach: {
-    width: responsiveSize(120),
-    height: responsiveSize(120),
+    width: responsiveSize(180),
+    height: responsiveSize(180),
     position: "absolute",
-    bottom: responsiveSize(80),
+    bottom: responsiveSize(40),
     right: responsiveSize(30),
   },
   cloudImage: {
