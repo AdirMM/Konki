@@ -31,8 +31,8 @@ export function TaskList() {
     ? tasks
     : tasks.filter(
         (task) =>
-          task.category?.name?.toLowerCase().trim() ===
-          category.name.toLowerCase().trim()
+          task.category?.id?.toLowerCase().trim() ===
+          category.id.toLowerCase().trim()
       );
 
   const handleToggleCompleted = (task) => {

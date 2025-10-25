@@ -1,19 +1,19 @@
-import React from 'react'
+import React from "react";
 import {
   TouchableOpacity,
   View,
   Text,
   StyleSheet,
   Dimensions,
-} from 'react-native'
-import { Shadow } from 'react-native-shadow-2'
+} from "react-native";
+import { Shadow } from "react-native-shadow-2";
 
-const { width, height } = Dimensions.get('window')
-const guidelineBaseWidth = 375
-const responsiveSize = (size) => (width / guidelineBaseWidth) * size
+const { width, height } = Dimensions.get("window");
+const guidelineBaseWidth = 375;
+const responsiveSize = (size) => (width / guidelineBaseWidth) * size;
 
 export const CustomButton = React.memo(
-  ({ icon, label, onPress, color = '#000', disabled = false }) => {
+  ({ icon, label, onPress, color = "#000", disabled = false }) => {
     return (
       <TouchableOpacity
         onPress={onPress}
@@ -32,18 +32,19 @@ export const CustomButton = React.memo(
           </View>
         </Shadow>
       </TouchableOpacity>
-    )
+    );
   }
-)
+);
 
 const styles = StyleSheet.create({
   touchWrapper: {
-    alignSelf: 'center',
+    alignSelf: "center",
+    zIndex: 45,
   },
   button: {
     borderRadius: responsiveSize(20),
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   iconButton: {
     paddingHorizontal: responsiveSize(42),
@@ -55,9 +56,9 @@ const styles = StyleSheet.create({
   },
 
   textLabel: {
-    color: 'white',
+    color: "white",
     fontSize: responsiveSize(19),
-    fontFamily: 'Geo_400Regular',
-    textAlign: 'center',
+    fontFamily: "Geo_400Regular",
+    textAlign: "center",
   },
-})
+});

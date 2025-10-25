@@ -46,7 +46,7 @@ export function AddTaskButton() {
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    bottom: -responsiveVertical(95),
+    bottom: -responsiveVertical(65),
     zIndex: 20,
     width: "100%",
     alignItems: "center",

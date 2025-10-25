@@ -8,7 +8,6 @@ import {
   Platform,
   StyleSheet,
   ImageBackground,
-  Dimensions,
 } from "react-native";
 import { useCategoryContext } from "../../context/CategoryContext";
 import { useTaskContext } from "../../context/TaskContext";
@@ -18,10 +17,11 @@ import { Shadow } from "react-native-shadow-2";
 import { CustomModal } from "./CustomModal";
 import { CustomButton } from "./CustomButton";
 import { CategoryList } from "./CategoryList";
-
-const { width, height } = Dimensions.get("window");
-const guidelineBaseWidth = 375;
-const responsiveSize = (size) => (width / guidelineBaseWidth) * size;
+import {
+  responsiveSize,
+  responsiveVertical,
+  responsiveFont,
+} from "../../utils/responsive";
 
 export function EditTask() {
   const { selectedTask, editTask, removeTask } = useTaskContext();
@@ -75,11 +75,11 @@ export function EditTask() {
         </Text>
 
         <Shadow
-          distance={10}
+          distance={responsiveSize(10)}
           startColor="rgba(0,0,0,1)"
-          offset={[-10, 8]}
+          offset={[-responsiveSize(10), responsiveSize(8)]}
           radius={responsiveSize(10)}
-          style={{ marginBottom: responsiveSize(8) }}
+          style={{ marginBottom: responsiveVertical(8) }}
         >
           <ImageBackground
             source={require("../../assets/notebook.jpg")}
@@ -100,13 +100,11 @@ export function EditTask() {
           </ImageBackground>
         </Shadow>
 
-        <Text style={styles.categoryText}>Categoría</Text>
-
         <Shadow
-          distance={7}
+          distance={responsiveSize(7)}
           startColor="rgba(0,0,0,1)"
           finalColor="rgba(0,0,0,0)"
-          offset={[-5, 8]}
+          offset={[-responsiveSize(5), responsiveSize(8)]}
           radius={responsiveSize(10)}
         >
           <View style={styles.shadowContainer}>
@@ -130,7 +128,6 @@ export function EditTask() {
             onPress={handleRemoveTask}
           />
 
-          {/* Botón Editar */}
           <CustomButton
             icon={
               <Feather name="edit-2" size={responsiveSize(23)} color="white" />
@@ -140,14 +137,14 @@ export function EditTask() {
         </View>
       </KeyboardAvoidingView>
 
-      {/* Imagenes decorativas */}
+      {/* Imágenes decorativas */}
       <Image
         source={require("../../assets/cloud.png")}
-        style={[styles.cloudImage, { left: responsiveSize(-10) }]}
+        style={[styles.cloudImage, { left: responsiveSize(5) }]}
       />
       <Image
         source={require("../../assets/cloud.png")}
-        style={[styles.cloudImage, { right: responsiveSize(-10) }]}
+        style={[styles.cloudImage, { right: responsiveSize(5) }]}
       />
       <Image
         source={require("../../assets/globe.png")}
@@ -180,20 +177,21 @@ export function EditTask() {
 
 const styles = StyleSheet.create({
   modalView: {
-    width: "90%",
+    width: responsiveSize(335),
     borderRadius: responsiveSize(12),
     alignItems: "center",
     zIndex: 1000,
+    gap: responsiveVertical(20),
   },
   charCount: {
     color: "#646464",
-    marginBottom: responsiveSize(5),
+    marginBottom: responsiveVertical(5),
     fontFamily: "Geo_400Regular",
-    fontSize: responsiveSize(17),
+    fontSize: responsiveFont(17),
   },
   inputBackground: {
-    width: width * 0.85,
-    minHeight: height * 0.22,
+    width: responsiveSize(320),
+    minHeight: responsiveVertical(180),
     borderWidth: responsiveSize(2.5),
     borderRadius: responsiveSize(10),
     overflow: "hidden",
@@ -201,7 +199,7 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     padding: responsiveSize(10),
-    fontSize: responsiveSize(29),
+    fontSize: responsiveFont(29),
     textAlignVertical: "top",
     backgroundColor: "transparent",
     color: "#000",
@@ -211,8 +209,8 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderWidth: responsiveSize(2),
     borderColor: "#111",
-    height: responsiveSize(60),
-    marginBottom: responsiveSize(40),
+    height: responsiveVertical(60),
+    marginBottom: responsiveVertical(30),
     borderRadius: responsiveSize(10),
   },
   buttonsContainer: {
@@ -220,70 +218,46 @@ const styles = StyleSheet.create({
     gap: responsiveSize(25),
     justifyContent: "center",
   },
-  categoryText: {
-    color: "#000",
-    textAlign: "center",
-    fontFamily: "Geo_400Regular",
-    fontSize: responsiveSize(24),
-    marginTop: responsiveSize(20),
-    marginBottom: responsiveSize(10),
-  },
-  saveButton: {
-    alignSelf: "center",
-    backgroundColor: "black",
-    alignItems: "center",
-    paddingHorizontal: responsiveSize(40),
-    paddingVertical: responsiveSize(11),
-    borderRadius: responsiveSize(20),
-  },
-  deleteButton: {
-    alignSelf: "center",
-    backgroundColor: "#ab0000",
-    alignItems: "center",
-    paddingHorizontal: responsiveSize(40),
-    paddingVertical: responsiveSize(11),
-    borderRadius: responsiveSize(20),
-  },
   globe: {
     width: responsiveSize(80),
     height: responsiveSize(80),
     position: "absolute",
-    top: responsiveSize(-57),
+    top: responsiveVertical(-57),
     left: responsiveSize(25),
   },
   spiderman: {
     width: responsiveSize(60),
     height: responsiveSize(60),
     position: "absolute",
-    top: responsiveSize(-38),
+    top: responsiveVertical(-38),
     right: responsiveSize(0),
   },
   airplane: {
     width: responsiveSize(100),
     height: responsiveSize(100),
     position: "absolute",
-    bottom: responsiveSize(130),
+    bottom: responsiveVertical(130),
     left: responsiveSize(-10),
   },
   shark: {
     width: responsiveSize(80),
     height: responsiveSize(80),
     position: "absolute",
-    bottom: responsiveSize(40),
+    bottom: responsiveVertical(40),
     left: responsiveSize(60),
   },
   beach: {
     width: responsiveSize(180),
     height: responsiveSize(180),
     position: "absolute",
-    bottom: responsiveSize(40),
+    bottom: responsiveVertical(40),
     right: responsiveSize(30),
   },
   cloudImage: {
     width: responsiveSize(110),
-    height: responsiveSize(70),
+    height: responsiveVertical(70),
     alignSelf: "center",
     position: "absolute",
-    top: responsiveSize(210),
+    top: responsiveVertical(210),
   },
 });

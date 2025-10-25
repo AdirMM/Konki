@@ -2,7 +2,7 @@
   "expo": {
     "name": "Konki",
     "slug": "konki-app",
-    "version": "1.0.0",
+    "version": "1.0.8",
     "orientation": "portrait",
     "icon": "./assets/konki-logo.png",
     "userInterfaceStyle": "light",
@@ -17,6 +17,7 @@
       "supportsTablet": true
     },
     "android": {
+      "versionCode": 5,
       "adaptiveIcon": {
         "foregroundImage": "./assets/konki-logo.png",
         "backgroundColor": "#161616"

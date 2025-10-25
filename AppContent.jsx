@@ -69,7 +69,7 @@ export default function AppContent() {
             style={[
               styles.container,
               {
-                paddingTop: insets.top + responsiveVertical(5),
+                paddingTop: insets.top + responsiveVertical(10),
                 paddingBottom: insets.bottom + responsiveVertical(45),
               },
             ]}
@@ -79,7 +79,7 @@ export default function AppContent() {
               style={[
                 styles.topRow,
                 {
-                  gap: responsiveSize(38),
+                  gap: responsiveSize(40),
                   marginBottom: responsiveVertical(5),
                 },
               ]}

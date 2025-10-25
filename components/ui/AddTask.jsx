@@ -94,25 +94,6 @@ export function AddTask() {
           </ImageBackground>
         </Shadow>
 
-        {canAddCategory && (
-          <TouchableOpacity
-            style={styles.touchWrapper}
-            onPress={() => switchModal("addTask", "category")}
-            activeOpacity={0.85}
-          >
-            <Shadow
-              distance={responsiveSize(5)}
-              startColor="#000"
-              offset={[0, responsiveSize(2)]}
-              style={styles.addCategoryButton}
-            >
-              <View style={styles.fullButtonArea}>
-                <Text style={styles.addCategory}>Crear Categoría</Text>
-              </View>
-            </Shadow>
-          </TouchableOpacity>
-        )}
-
         <Shadow
           distance={responsiveSize(7)}
           startColor="rgba(0,0,0,1)"
@@ -135,11 +116,11 @@ export function AddTask() {
 
       <Image
         source={require("../../assets/cloud.png")}
-        style={[styles.cloudImage, { left: responsiveSize(-10) }]}
+        style={[styles.cloudImage, { left: responsiveSize(5) }]}
       />
       <Image
         source={require("../../assets/cloud.png")}
-        style={[styles.cloudImage, { right: responsiveSize(-10) }]}
+        style={[styles.cloudImage, { right: responsiveSize(5) }]}
       />
       <Image
         source={require("../../assets/spiderman.png")}
@@ -189,26 +170,6 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     color: "#000",
   },
-  touchWrapper: {
-    width: "100%",
-    alignItems: "center",
-  },
-  fullButtonArea: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-  },
-  addCategoryButton: {
-    paddingVertical: responsiveVertical(14),
-    borderRadius: responsiveSize(20),
-    width: responsiveSize(170),
-  },
-  addCategory: {
-    color: "white",
-    fontSize: responsiveFont(19),
-    textAlign: "center",
-    fontFamily: "Geo_400Regular",
-  },
   shadowContainer: {
     height: responsiveVertical(60),
     marginBottom: responsiveVertical(30),
@@ -218,11 +179,11 @@ const styles = StyleSheet.create({
     borderColor: "#111",
   },
   cloudImage: {
-    width: responsiveSize(110),
+    width: responsiveSize(120),
     height: responsiveVertical(70),
     alignSelf: "center",
     position: "absolute",
-    bottom: responsiveVertical(210),
+    bottom: responsiveVertical(235),
   },
   spiderman: {
     width: responsiveSize(120),

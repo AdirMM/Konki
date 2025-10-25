@@ -95,7 +95,7 @@ export function TaskGroup({
         <View key={group.label} style={styles.group}>
           <Text style={styles.relativeDate}>{group.label}</Text>
           <View style={styles.taskList}>
-            {group.tasks.map((task) => (
+            {[...group.tasks].reverse().map((task) => (
               <TaskItem
                 key={task.id}
                 task={task}

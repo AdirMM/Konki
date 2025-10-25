@@ -9,9 +9,42 @@ export function TaskProvider({ children }) {
   const [tasks, setTasks] = useState([]);
   const [taskInput, setTaskInput] = useState("");
   const [selectedTask, setSelectedTask] = useState({});
-  const { category } = useCategoryContext();
+  const { category, categories } = useCategoryContext();
 
   const hasCompletedTasks = tasks.some((task) => task.completed);
+
+  // Migrar tareas que tenían categorías antiguas a "Todas"
+  useEffect(() => {
+    const migrateTasks = async () => {
+      try {
+        const migratedFlag = await AsyncStorage.getItem(
+          "@migratedOldDefaultsTasks"
+        );
+        if (migratedFlag === "true") return;
+
+        const savedTasks = await AsyncStorage.getItem("tasks");
+        if (!savedTasks) return;
+
+        const parsed = JSON.parse(savedTasks);
+        const oldDefaultNames = ["Hogar", "Trabajo", "Estudio", "Compras"];
+        const todasCategory = categories.find((c) => c.name === "Todas");
+
+        const migratedTasks = parsed.map((t) =>
+          oldDefaultNames.includes(t.category?.name)
+            ? { ...t, category: todasCategory }
+            : t
+        );
+
+        setTasks(migratedTasks);
+        await AsyncStorage.setItem("tasks", JSON.stringify(migratedTasks));
+        await AsyncStorage.setItem("@migratedOldDefaultsTasks", "true");
+      } catch (error) {
+        console.log("Error migrando tareas antiguas:", error);
+      }
+    };
+
+    migrateTasks();
+  }, [categories]);
 
   const addTask = async (text, selectedCategory = category) => {
     if (!text.trim()) return;
@@ -23,7 +56,7 @@ export function TaskProvider({ children }) {
       text: text.trim(),
       category: { id, name, iconName, color },
       completed: false,
-      createAt: Date.now(),
+      createdAt: Date.now(),
     };
 
     const updatedTasks = [...tasks, newTask];
@@ -40,11 +73,7 @@ export function TaskProvider({ children }) {
       task.id === id ? { ...task, ...updatedTask } : task
     );
     setTasks(updatedTasks);
-    try {
-      await AsyncStorage.setItem("tasks", JSON.stringify(updatedTasks));
-    } catch (error) {
-      console.error("Error editando tareas:", error);
-    }
+    await AsyncStorage.setItem("tasks", JSON.stringify(updatedTasks));
   };
 
   const toggleCompleted = async (id) => {
@@ -52,62 +81,41 @@ export function TaskProvider({ children }) {
       task.id === id ? { ...task, completed: !task.completed } : task
     );
     setTasks(updatedTasks);
-    try {
-      await AsyncStorage.setItem("tasks", JSON.stringify(updatedTasks));
-    } catch (error) {
-      console.error("Error completando la tarea:", error);
-    }
+    await AsyncStorage.setItem("tasks", JSON.stringify(updatedTasks));
   };
 
   const removeTask = async (id) => {
     const updatedTasks = tasks.filter((task) => task.id !== id);
     setTasks(updatedTasks);
-
     if (updatedTasks.length === 0) {
-      try {
-        await AsyncStorage.removeItem("tasks");
-      } catch (error) {
-        console.log("Error al eliminar la tarea:", error);
-      }
+      await AsyncStorage.removeItem("tasks");
     } else {
-      try {
-        await AsyncStorage.setItem("tasks", JSON.stringify(updatedTasks));
-      } catch (error) {
-        console.error(error);
-      }
+      await AsyncStorage.setItem("tasks", JSON.stringify(updatedTasks));
     }
   };
 
   const deleteCompletedTask = async () => {
     const updatedTasks = tasks.filter((task) => !task.completed);
     setTasks(updatedTasks);
-    try {
-      await AsyncStorage.setItem("tasks", JSON.stringify(updatedTasks));
-    } catch (error) {
-      console.error("Error eliminando tareas completadas:", error);
-    }
+    await AsyncStorage.setItem("tasks", JSON.stringify(updatedTasks));
   };
 
-  // Cargar tareas desde almacenamiento al iniciar
+  // Cargar tareas al iniciar
   useEffect(() => {
     const loadTasks = async () => {
       try {
         const savedTasks = await AsyncStorage.getItem("tasks");
         if (savedTasks) {
           const parsed = JSON.parse(savedTasks);
-          if (Array.isArray(parsed)) {
-            const normalized = parsed.map((t) => ({
-              ...t,
-              createdAt: t.createdAt || t.createAt || Date.now(),
-            }));
-            setTasks(normalized);
-            await AsyncStorage.setItem("tasks", JSON.stringify(normalized)); // actualiza almacenamiento
-          } else {
-            console.warn("⚠️ Tareas guardadas no son válidas:", parsed);
-          }
+          const normalized = parsed.map((t) => ({
+            ...t,
+            createdAt: t.createdAt || t.createAt || Date.now(),
+          }));
+          setTasks(normalized);
+          await AsyncStorage.setItem("tasks", JSON.stringify(normalized));
         }
       } catch (error) {
-        console.warn("❌ Error cargando tareas desde AsyncStorage:", error);
+        console.warn("Error cargando tareas:", error);
       }
     };
     loadTasks();
@@ -136,6 +144,5 @@ export function TaskProvider({ children }) {
 }
 
 export function useTaskContext() {
-  const context = useContext(TaskContext);
-  return context;
+  return useContext(TaskContext);
 }

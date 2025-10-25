@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
   },
   addtask: {
     position: "absolute",
-    bottom: responsiveSize(175),
+    bottom: responsiveSize(210),
     right: responsiveSize(12),
     width: responsiveSize(240),
     height: responsiveSize(130),
@@ -285,15 +285,15 @@ const styles = StyleSheet.create({
   keys: {
     position: "absolute",
     right: responsiveSize(10),
-    bottom: responsiveSize(-5),
+    bottom: responsiveSize(15),
     width: responsiveSize(105),
     height: responsiveSize(120),
   },
   despescar: {
     position: "absolute",
     bottom: responsiveSize(130),
-    right: responsiveSize(-18),
-    width: responsiveSize(200),
+    right: responsiveSize(-15),
+    width: responsiveSize(230),
     height: responsiveSize(240),
   },
   consejo1: {

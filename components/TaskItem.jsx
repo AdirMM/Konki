@@ -10,7 +10,7 @@ import {
 import { Feather } from "@expo/vector-icons";
 import { useTaskContext } from "../context/TaskContext";
 import { Shadow } from "react-native-shadow-2";
-import { responsiveSize } from "../utils/responsive"; // <-- Asegúrate de tener este helper
+import { responsiveFont, responsiveSize } from "../utils/responsive"; // <-- Asegúrate de tener este helper
 
 export function TaskItem({
   task,
@@ -145,7 +145,7 @@ export function TaskItem({
 
   if (!isVisible) return null;
 
-  const iconName = task.category?.iconName || "list";
+  const iconName = task.category?.iconName || "layers";
   const iconColor = task.category?.color || "#000";
 
   return (
@@ -264,6 +264,6 @@ const styles = StyleSheet.create({
   deleteButtonText: {
     color: "#fff",
     fontWeight: "bold",
-    fontSize: responsiveSize(14),
+    fontSize: responsiveFont(13),
   },
 });

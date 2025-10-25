@@ -104,11 +104,27 @@ export function Menu() {
           <TouchableOpacity
             style={styles.menuButton}
             onPress={() => {
+              toggleModal("category");
+              handleToggleMenu();
+            }}
+          >
+            <Text style={styles.buttonText}>Nueva Categoría</Text>
+          </TouchableOpacity>
+        </Shadow>
+
+        <Shadow
+          distance={5}
+          startColor="#000"
+          offset={[0, responsiveVertical(3)]}
+        >
+          <TouchableOpacity
+            style={styles.menuButton}
+            onPress={() => {
               toggleModal("categories");
               handleToggleMenu();
             }}
           >
-            <Text style={styles.buttonText}>Ver Categorías</Text>
+            <Text style={styles.buttonText}>Todas las Categorías</Text>
           </TouchableOpacity>
         </Shadow>
 
@@ -124,7 +140,7 @@ export function Menu() {
               handleToggleMenu();
             }}
           >
-            <Text style={styles.buttonText}>Eliminar completadas</Text>
+            <Text style={styles.buttonText}>Eliminar Tareas Completadas</Text>
           </TouchableOpacity>
         </Shadow>
       </Animated.View>
@@ -143,20 +159,19 @@ const styles = StyleSheet.create({
     zIndex: 999,
   },
   menu: {
-    width: responsiveSize(220),
     position: "absolute",
-    top: responsiveVertical(70),
+    top: responsiveVertical(103),
     zIndex: 1000,
     flexDirection: "column",
     alignItems: "flex-start",
   },
   menuButton: {
-    height: responsiveVertical(60),
+    height: responsiveVertical(65),
     justifyContent: "center",
     borderWidth: responsiveSize(2),
     borderRadius: responsiveSize(12),
     marginBottom: responsiveVertical(12),
-    paddingHorizontal: responsiveSize(15),
+    padding: responsiveSize(15),
   },
   deleteButton: {
     borderColor: "#ab0000",
@@ -164,7 +179,6 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: responsiveSize(18),
     color: "#fff",
-    textAlign: "center",
     fontFamily: "Geo_400Regular_Italic",
   },
 });

@@ -10,12 +10,14 @@ import {
   Dimensions,
 } from "react-native";
 import { Feather } from "@expo/vector-icons"; // Solo para las flechas
+import { Entypo } from "@expo/vector-icons";
 import { useUIContext } from "../../context/UIContext";
 import { useCategoryContext } from "../../context/CategoryContext";
 import { CustomModal } from "./CustomModal";
 import { Shadow } from "react-native-shadow-2";
 import { responsiveSize, responsiveVertical } from "../../utils/responsive";
 import { iconMap } from "../../utils/icons";
+import { CustomButton } from "../ui/CustomButton";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const columns = 2;
@@ -23,7 +25,8 @@ const horizontalPadding = 16 * (columns - 1);
 const itemWidth = (screenWidth * 0.8 - horizontalPadding) / columns;
 
 export function CategoriesModal() {
-  const { modals, toggleModal, setSelectedCategory } = useUIContext();
+  const { modals, toggleModal, setSelectedCategory, switchModal } =
+    useUIContext();
   const { categories } = useCategoryContext();
   const [showArrow, setShowArrow] = useState(false);
   const [isAtEnd, setIsAtEnd] = useState(false);
@@ -39,7 +42,7 @@ export function CategoriesModal() {
   };
 
   const handleContentSizeChange = (contentWidth, contentHeight) => {
-    if (contentHeight > screenHeight * 0.38) {
+    if (contentHeight > screenHeight * 0.4) {
       if (!showArrow) {
         setShowArrow(true);
         Animated.loop(
@@ -110,35 +113,29 @@ export function CategoriesModal() {
           scrollEventThrottle={16}
         >
           {categories
-            .filter((cat) => cat.id !== "todas")
+            .filter((cat) => cat.id !== "Todas")
             .slice(1)
-            .map((cat, index) => {
-              const isDisabled = index < 4;
-              return (
-                <View key={cat.id} style={{ width: itemWidth }}>
-                  <Shadow
-                    distance={8}
-                    startColor="#000"
-                    offset={[0, 5]}
-                    style={{ flex: 1 }}
+            .map((cat) => (
+              <View key={cat.id} style={{ width: itemWidth }}>
+                <Shadow
+                  distance={8}
+                  startColor="#000"
+                  offset={[0, 5]}
+                  style={{ flex: 1 }}
+                >
+                  <TouchableOpacity
+                    onPress={() => handleClick(cat)}
+                    activeOpacity={0.8}
+                    style={[styles.categoryItem, { flex: 1 }]}
                   >
-                    <TouchableOpacity
-                      onPress={() => !isDisabled && handleClick(cat)}
-                      activeOpacity={isDisabled ? 0.5 : 1}
-                      style={[
-                        styles.categoryItem,
-                        { flex: 1, opacity: isDisabled ? 0.5 : 1 },
-                      ]}
-                    >
-                      <View style={styles.buttonContent}>
-                        {renderIcon(cat)}
-                        <Text style={styles.categoryText}>{cat.name}</Text>
-                      </View>
-                    </TouchableOpacity>
-                  </Shadow>
-                </View>
-              );
-            })}
+                    <View style={styles.buttonContent}>
+                      {renderIcon(cat)}
+                      <Text style={styles.categoryText}>{cat.name}</Text>
+                    </View>
+                  </TouchableOpacity>
+                </Shadow>
+              </View>
+            ))}
         </ScrollView>
 
         {showArrow && (
@@ -163,6 +160,12 @@ export function CategoriesModal() {
             </Shadow>
           </Animated.View>
         )}
+      </View>
+      <View>
+        <CustomButton
+          icon={<Entypo name="plus" size={responsiveSize(30)} color="white" />}
+          onPress={() => switchModal("categories", "category")}
+        />
       </View>
 
       {/* Imágenes decorativas */}
@@ -210,7 +213,7 @@ export function CategoriesModal() {
           alignSelf: "center",
           position: "absolute",
           bottom: responsiveVertical(300),
-          left: responsiveSize(50),
+          left: responsiveSize(10),
         }}
         resizeMode="contain"
       />
@@ -222,7 +225,7 @@ export function CategoriesModal() {
           alignSelf: "center",
           position: "absolute",
           bottom: responsiveVertical(300),
-          left: responsiveSize(240),
+          right: responsiveSize(10),
         }}
         resizeMode="contain"
       />
@@ -250,6 +253,7 @@ const createStyles = (itemWidth) =>
       borderRadius: responsiveSize(12),
       zIndex: 1000,
       alignItems: "center",
+      marginBottom: responsiveSize(50),
     },
     note: {
       textAlign: "center",

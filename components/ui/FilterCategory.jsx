@@ -128,7 +128,7 @@ export function FilterCategory() {
               data={categories}
               keyExtractor={(item) => item.id}
               renderItem={renderItem}
-              showsVerticalScrollIndicator={false}
+              showsVerticalScrollIndicator={true}
               contentContainerStyle={styles.scrollContent}
               style={styles.scrollContainer}
               removeClippedSubviews

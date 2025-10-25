@@ -34,6 +34,7 @@ export function CategoryModal() {
   const [selectedColor, setSelectedColor] = useState("#3b82f6");
   const [selectedIcon, setSelectedIcon] = useState("");
   const [iconError, setIconError] = useState(false);
+  const [showError, setShowError] = useState(false);
 
   // Popups
   const [showColors, setShowColors] = useState(false);
@@ -104,12 +105,22 @@ export function CategoryModal() {
   }, [selectedCategory]);
 
   const handleCategory = () => {
-    if (newCategory.trim() === "") return;
-    if (!selectedIcon) {
-      setIconError(true);
+    // si falta nombre -> mostrar error
+    if (newCategory.trim() === "") {
+      setShowError(true);
+      // opcional: quitar iconError si estaba activo
+      setIconError(false);
       return;
     }
 
+    // si falta ícono -> marcar error de ícono y mostrar caja de error
+    if (!selectedIcon) {
+      setIconError(true);
+      setShowError(true);
+      return;
+    }
+
+    // si todo ok -> crear/actualizar
     if (selectedCategory) {
       const updatedCat = {
         ...selectedCategory,
@@ -127,19 +138,22 @@ export function CategoryModal() {
         iconName: selectedIcon,
       };
       addCategory(newCat);
-      switchModal("category", "addTask");
+      switchModal("category", "categories");
     }
 
+    // limpiar estados
     setNewCategory("");
     setSelectedColor("#3b82f6");
     setSelectedIcon("");
     setSelectedCategory(null);
     setIconError(false);
+    setShowError(false);
   };
 
   const handleDelete = () => {
     if (!selectedCategory) return;
     deleteCategory(selectedCategory.id);
+    setSelectedCategory(null); // ✅ Limpia la selección
     switchModal("category", "categories");
   };
 
@@ -154,6 +168,7 @@ export function CategoryModal() {
         setSelectedColor("#3b82f6");
         setSelectedIcon("");
         setIconError(false);
+        setShowError(false); // <- añadir
       }}
       title="Categoría"
     >
@@ -178,7 +193,10 @@ export function CategoryModal() {
               placeholderTextColor="#666"
               value={newCategory}
               maxLength={10}
-              onChangeText={setNewCategory}
+              onChangeText={(text) => {
+                setNewCategory(text);
+                if (text.trim()) setShowError(false);
+              }}
               returnKeyType="done"
             />
           </ImageBackground>
@@ -225,6 +243,7 @@ export function CategoryModal() {
                       style={[styles.colorOption, { backgroundColor: item }]}
                       onPress={() => {
                         setSelectedColor(item);
+                        setShowError(false);
                         animatePopup(colorAnim, false);
                       }}
                     />
@@ -294,8 +313,9 @@ export function CategoryModal() {
                         style={styles.iconOption}
                         onPress={() => {
                           setSelectedIcon(item.name);
-                          animatePopup(iconAnim, false);
                           setIconError(false);
+                          setShowError(false);
+                          animatePopup(iconAnim, false);
                         }}
                       >
                         <IconComp size={responsiveSize(23)} color="#fff" />
@@ -307,6 +327,20 @@ export function CategoryModal() {
             )}
           </View>
         </View>
+
+        {/* --- Mensaje de error --- */}
+        {showError &&
+          (!newCategory.trim() || !selectedIcon || !selectedColor) && (
+            <Animated.View style={styles.errorBox}>
+              <Text style={styles.errorText}>
+                {!newCategory.trim()
+                  ? "Por favor nombra la categoría"
+                  : !selectedIcon
+                  ? "Por favor selecciona un ícono"
+                  : "Por favor selecciona un color"}
+              </Text>
+            </Animated.View>
+          )}
 
         {/* --- Botones --- */}
         <View style={styles.buttonsContainer}>
@@ -412,6 +446,7 @@ const styles = StyleSheet.create({
     width: responsiveSize(45),
     height: responsiveSize(45),
     borderRadius: responsiveSize(10),
+    zIndex: 5,
   },
   colorOption: {
     width: responsiveSize(30),
@@ -426,6 +461,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
     justifyContent: "center",
     alignItems: "center",
+    zIndex: 5,
   },
   iconOption: {
     width: responsiveSize(35),
@@ -476,5 +512,26 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: responsiveSize(-52),
     left: responsiveSize(5),
+  },
+  errorBox: {
+    position: "absolute",
+    bottom: responsiveSize(60), // 🔹 Ajusta si el label se superpone con los botones
+    alignSelf: "center",
+    backgroundColor: "#ab0000",
+    paddingVertical: responsiveSize(10),
+    paddingHorizontal: responsiveSize(20),
+    borderRadius: responsiveSize(10),
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.6,
+    shadowRadius: 5,
+    elevation: 5,
+    zIndex: 10,
+  },
+  errorText: {
+    color: "#fff",
+    fontFamily: "Geo_400Regular",
+    fontSize: responsiveSize(20),
+    textAlign: "center",
   },
 });
